@@ -10,76 +10,109 @@
 <style>
   :root{
     --bg:#f7f8fa; --card:#ffffff; --border:#e3e7ee; --ink:#1f3a5f; --body:#3d4f66; --muted:#7a8aa0;
-    --forest:#2f6b4f; --amber:#d9a441; --terra:#c45a3b; --sky:#5b8fb9; --moss:#7ca261; --sand:#e8d5b0;
-    --pos:#2f6b4f; --neg:#c0392b;
+    --a1:#2f6b4f; --a2:#7ca261; --a3:#d9a441; --a4:#c45a3b; --a5:#5b8fb9; --a6:#cbb287; --a7:#1d4636; --a8:#a9714b;
+    --pos:#2f6b4f; --neg:#c0392b; --chipbg:#eef2ee;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--body);min-height:100vh;font-size:14px}
-  /* ---- header ---- */
-  header{background:#fff;border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:34px;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+  header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:30px;flex-wrap:wrap;position:sticky;top:0;z-index:20}
   .brand{font-family:'Source Serif 4',serif;font-size:27px;font-weight:700;color:var(--ink);letter-spacing:-.5px}
-  .brand em{font-style:normal;color:var(--forest)}
-  .kpistrip{display:flex;gap:34px;flex-wrap:wrap;margin-left:auto}
+  .brand em{font-style:normal;color:var(--a1)}
+  .askbtn{font-family:inherit;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;border:1px solid var(--border);background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(47,107,79,.25)}
+  .kpistrip{display:flex;gap:30px;flex-wrap:wrap;margin-left:auto}
   .skpi .l{font-size:10.5px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
   .skpi .v{font-size:19px;font-weight:700;color:var(--ink);font-family:'JetBrains Mono',monospace;margin-top:1px}
-  .skpi .v.amber{color:var(--amber)} .skpi .v.green{color:var(--forest)} .skpi .v.terra{color:var(--terra)}
+  .skpi .v.amber{color:var(--a3)} .skpi .v.green{color:var(--a1)} .skpi .v.terra{color:var(--a4)}
   .asof{font-size:11.5px;color:var(--muted);text-align:right;line-height:1.5}
-  /* ---- toolbar ---- */
-  .toolbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .toolbar .lbl{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--muted);margin-right:6px}
-  .tab{font-family:inherit;font-size:13px;font-weight:600;padding:7px 18px;border-radius:99px;border:1px solid var(--border);background:#fff;color:var(--body);cursor:pointer;transition:.15s}
-  .tab:hover{border-color:var(--forest);color:var(--forest)}
-  .tab.active{background:var(--forest);border-color:var(--forest);color:#fff}
+  .tab{font-family:inherit;font-size:13px;font-weight:600;padding:7px 18px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--body);cursor:pointer;transition:.15s}
+  .tab:hover{border-color:var(--a1);color:var(--a1)}
+  .tab.active{background:var(--a1);border-color:var(--a1);color:#fff}
   .layoutbox{margin-left:auto;display:flex;align-items:center;gap:8px}
   .layoutbox .lbl{margin:0}
-  .lay{width:38px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;padding:6px}
+  .lay{width:38px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer;display:flex;gap:3px;padding:6px}
   .lay i{display:block;background:#c7d0dc;border-radius:2px;flex:1;height:100%}
-  .lay.active{border-color:var(--sky);background:#eef5fb}
-  .lay.active i{background:var(--sky)}
-  /* ---- pages ---- */
-  #panes{display:grid;grid-template-columns:1fr;gap:0}
-  #panes.split{grid-template-columns:1fr 1fr;gap:0}
+  .lay.active{border-color:var(--a5);background:#eef5fb}
+  .lay.active i{background:var(--a5)}
+  select.themesel,#whatsnewBtn{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer}
+  #panes{display:grid;grid-template-columns:1fr}
+  #panes.split{grid-template-columns:1fr 1fr}
   .pane{min-width:0}
   .pane + .pane{border-left:1px solid var(--border)}
   .paneselect{display:none;padding:10px 28px 0}
   #panes.split .paneselect{display:block}
-  .paneselect select{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:#fff}
-  .page{display:none;padding:22px 28px 50px;max-width:1500px;margin:0 auto}
-  .page.show{display:block}
+  .paneselect select{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card)}
+  .page{padding:22px 28px 50px;max-width:1500px;margin:0 auto}
   #panes.split .page{padding:18px 18px 40px}
   h1{font-family:'Source Serif 4',serif;font-size:23px;color:var(--ink);margin-bottom:2px}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
   .grid{display:grid;gap:14px}
   .row2{grid-template-columns:2fr 1fr} .rowhalf{grid-template-columns:1fr 1fr}
   #panes.split .row2,#panes.split .rowhalf{grid-template-columns:1fr}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(31,58,95,.05)}
-  .card{border-top:3px solid var(--forest)}
-  .card.t-amber{border-top-color:var(--amber)} .card.t-terra{border-top-color:var(--terra)} .card.t-sky{border-top-color:var(--sky)}
+  .card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--a1);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(31,58,95,.05)}
+  .card.t-amber{border-top-color:var(--a3)} .card.t-terra{border-top-color:var(--a4)} .card.t-sky{border-top-color:var(--a5)}
   .card h3{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1.3px}
-  .chartbox{position:relative;height:290px} .chartbox.tall{height:360px}
+  .hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:8px}
+  .chartbox{position:relative;height:290px} .chartbox.tall{height:350px}
   .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px}
-  .kpi{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(31,58,95,.05)}
+  .kpi{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--a1);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(31,58,95,.05)}
   .kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600}
   .kpi .val{font-size:24px;font-weight:700;margin:3px 0 1px;font-family:'JetBrains Mono',monospace;color:var(--ink)}
   .kpi .delta{font-size:12px;font-weight:600}
   .up{color:var(--pos)} .down{color:var(--neg)}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .chips .lbl{font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--muted)}
+  .chip{font-family:inherit;font-size:12px;font-weight:600;padding:5px 14px;border-radius:99px;border:1px solid var(--border);background:var(--chipbg);color:var(--ink);cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--a1)}
+  .chip.active{background:var(--a1);border-color:var(--a1);color:#fff}
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{text-align:left;padding:8px 10px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);border-bottom:2px solid var(--border)}
   td{padding:8px 10px;border-top:1px solid var(--border);color:var(--body)}
   td b{color:var(--ink)}
   td.num,th.num{font-family:'JetBrains Mono',monospace;text-align:right;font-size:12.5px}
+  tr.clickable{cursor:pointer} tr.clickable:hover td{background:#f3f6f3}
   .heat{border-radius:6px;padding:3px 8px;display:inline-block;min-width:62px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px}
-  .databar{position:relative;height:16px;border-radius:4px;background:#eef2e8}
-  .databar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--forest),var(--moss))}
-  .pill{display:inline-block;font-size:10.5px;padding:2px 9px;border-radius:99px;font-weight:600;background:#eef5fb;color:var(--sky)}
+  .databar{position:relative;height:16px;border-radius:4px;background:var(--chipbg)}
+  .databar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+  .pill{display:inline-block;font-size:10.5px;padding:2px 9px;border-radius:99px;font-weight:600;background:#eef5fb;color:var(--a5)}
   footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+  /* modal */
+  #overlay{display:none;position:fixed;inset:0;background:rgba(31,58,95,.4);z-index:50;align-items:flex-start;justify-content:center;padding:60px 20px}
+  #overlay.show{display:flex}
+  #modal{background:var(--card);border-radius:16px;max-width:680px;width:100%;max-height:75vh;overflow:auto;padding:24px 28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  #modal h2{font-family:'Source Serif 4',serif;font-size:20px;color:var(--ink);margin-bottom:4px}
+  #modal .msub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  #modal .mclose{float:right;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+  /* drawers */
+  .drawer{position:fixed;top:0;right:-420px;width:400px;height:100vh;background:var(--card);border-left:1px solid var(--border);z-index:60;transition:right .25s ease;box-shadow:-8px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column}
+  .drawer.open{right:0}
+  .drawer .dhead{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .drawer .dhead h2{font-family:'Source Serif 4',serif;font-size:18px;color:var(--ink)}
+  .drawer .dclose{border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+  .drawer .dbody{padding:16px 20px;overflow:auto;flex:1}
+  .wn{border-left:3px solid var(--a1);padding:10px 14px;margin-bottom:12px;background:var(--bg);border-radius:0 10px 10px 0}
+  .wn .wt{font-weight:700;color:var(--ink);font-size:13px}
+  .wn .wd{font-size:11px;color:var(--muted);margin-bottom:3px}
+  .wn p{font-size:12.5px}
+  /* chat */
+  .msg{margin-bottom:10px;max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.5}
+  .msg.user{background:var(--a1);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+  .msg.bot{background:var(--bg);border:1px solid var(--border);border-bottom-left-radius:4px}
+  .msg.bot b{color:var(--ink)}
+  .sugg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .sugg button{font-family:inherit;font-size:11.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--a1);cursor:pointer;font-weight:600}
+  .chatinput{display:flex;gap:8px;padding:14px 16px;border-top:1px solid var(--border)}
+  .chatinput input{flex:1;font-family:inherit;font-size:13px;padding:9px 14px;border:1px solid var(--border);border-radius:99px;outline:none}
+  .chatinput button{font-family:inherit;font-weight:600;font-size:13px;padding:9px 18px;border-radius:99px;border:none;background:var(--a1);color:#fff;cursor:pointer}
   @media(max-width:1100px){#panes.split{grid-template-columns:1fr}}
-  @media(max-width:900px){.row2,.rowhalf{grid-template-columns:1fr}.kpistrip{margin-left:0}}
+  @media(max-width:900px){.row2,.rowhalf{grid-template-columns:1fr}.kpistrip{margin-left:0}.drawer{width:100vw;right:-100vw}}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">Adventure<em>Works</em></div>
+  <button class="askbtn" onclick="openChat()">✦ Ask Claude</button>
   <div class="kpistrip">
     <div class="skpi"><div class="l">Revenue (All)</div><div class="v">$109.8M</div></div>
     <div class="skpi"><div class="l">Profit</div><div class="v amber">$12.6M</div></div>
@@ -98,6 +131,13 @@
   <button class="tab" data-p="p2">Product &amp; Profitability</button>
   <button class="tab" data-p="p3">Customers &amp; Territory</button>
   <div class="layoutbox">
+    <button id="whatsnewBtn" onclick="openWN()">★ What's New</button>
+    <span class="lbl">THEME</span>
+    <select class="themesel" id="themeSel">
+      <option value="adventure">Adventure</option>
+      <option value="ocean">Ocean</option>
+      <option value="dusk">Dusk</option>
+    </select>
     <span class="lbl">LAYOUT</span>
     <button class="lay active" id="laySingle" title="Single page"><i></i></button>
     <button class="lay" id="laySplit" title="Two pages side by side"><i></i><i></i></button>
@@ -115,32 +155,28 @@
   </div>
 </div>
 
-<!-- PAGE 1 -->
-<template id="tpl-p1"><section class="page show">
+<!-- templates -->
+<template id="tpl-p1"><section class="page">
   <h1>Executive Pulse</h1>
-  <div class="sub">FY2018 – FY2020 · Internet + Reseller channels · monthly trend, channel mix &amp; geography</div>
-  <div class="grid kpis">
-    <div class="kpi"><div class="lbl">Total Revenue</div><div class="val">$109.8M</div><div class="delta up">▲ 52.3% YoY FY20</div></div>
-    <div class="kpi"><div class="lbl">Profit</div><div class="val">$12.6M</div><div class="delta up">▲ 56.6% YoY FY20</div></div>
-    <div class="kpi"><div class="lbl">Avg Order Value</div><div class="val">$3,491</div><div class="delta down">▼ 69.3% YoY FY20</div></div>
-    <div class="kpi"><div class="lbl">Units Sold</div><div class="val">274.8K</div><div class="delta up">▲ 100.5% YoY FY20</div></div>
-  </div>
+  <div class="sub">FY2018 – FY2020 · monthly trend, channel mix &amp; geography</div>
+  <div class="chips" data-c="channelChips"><span class="lbl">CHANNEL:</span></div>
+  <div class="grid kpis" data-c="kpiRow"></div>
   <div class="grid row2">
-    <div class="card"><h3>Monthly Revenue by Channel + Profit</h3><div class="chartbox tall"><canvas data-c="cTrend"></canvas></div></div>
+    <div class="card"><h3>Monthly Revenue + Profit</h3><div class="chartbox tall"><canvas data-c="cTrend"></canvas></div></div>
     <div class="card t-amber"><h3>Revenue by Channel</h3><div class="chartbox tall"><canvas data-c="cChannel"></canvas></div></div>
   </div>
   <div class="grid rowhalf" style="margin-top:14px">
-    <div class="card t-sky"><h3>Revenue by Country (colour = margin)</h3><div class="chartbox"><canvas data-c="cCountry"></canvas></div></div>
-    <div class="card t-terra"><h3>Category Revenue Ranking</h3><div class="chartbox"><canvas data-c="cCategory"></canvas></div></div>
+    <div class="card t-sky"><h3>Revenue by Country (colour = margin)</h3><div class="chartbox"><canvas data-c="cCountry"></canvas></div><div class="hint">Click a bar to drill into regions</div></div>
+    <div class="card t-terra"><h3>Category Revenue Ranking</h3><div class="chartbox"><canvas data-c="cCategory"></canvas></div><div class="hint">Click a bar to drill into subcategories</div></div>
   </div>
 </section></template>
 
-<!-- PAGE 2 -->
-<template id="tpl-p2"><section class="page show">
+<template id="tpl-p2"><section class="page">
   <h1>Product &amp; Profitability</h1>
   <div class="sub">397 products · 4 categories · revenue vs margin economics</div>
+  <div class="chips" data-c="catChips"><span class="lbl">CATEGORY:</span></div>
   <div class="grid rowhalf">
-    <div class="card"><h3>Stars &amp; Dogs — Revenue vs Margin (bubble = units)</h3><div class="chartbox tall"><canvas data-c="cScatter"></canvas></div></div>
+    <div class="card"><h3>Stars &amp; Dogs — Revenue vs Margin (bubble = units)</h3><div class="chartbox tall"><canvas data-c="cScatter"></canvas></div><div class="hint">Click a bubble for product detail</div></div>
     <div class="card t-amber"><h3>Subcategory Revenue by Fiscal Year</h3><div class="chartbox tall"><canvas data-c="cRibbon"></canvas></div></div>
   </div>
   <div class="grid rowhalf" style="margin-top:14px">
@@ -149,93 +185,242 @@
   </div>
 </section></template>
 
-<!-- PAGE 3 -->
-<template id="tpl-p3"><section class="page show">
+<template id="tpl-p3"><section class="page">
   <h1>Customers &amp; Territory</h1>
   <div class="sub">18,485 customers · 702 resellers · 3 continental groups</div>
   <div class="grid rowhalf">
     <div class="card"><h3>New vs Returning Customers by Quarter</h3><div class="chartbox"><canvas data-c="cNewRet"></canvas></div></div>
-    <div class="card t-terra"><h3>Channel Economics — Revenue by Business Type</h3><div class="chartbox"><canvas data-c="cBizType"></canvas></div></div>
+    <div class="card t-terra"><h3>Channel Economics — Revenue by Business Type</h3><div class="chartbox"><canvas data-c="cBizType"></canvas></div><div class="hint">Click a bar to see its top resellers</div></div>
   </div>
   <div class="grid row2" style="margin-top:14px">
-    <div class="card t-sky"><h3>Top 15 Resellers</h3><div data-c="resellerTable" style="max-height:400px;overflow:auto"></div></div>
+    <div class="card t-sky"><h3>Top 15 Resellers</h3><div data-c="resellerTable" style="max-height:400px;overflow:auto"></div><div class="hint">Click a row for reseller detail</div></div>
     <div class="card t-amber"><h3>Top Customer Regions (Internet)</h3><div class="chartbox tall"><canvas data-c="cStates"></canvas></div></div>
   </div>
 </section></template>
 
-<footer>Built from the Power BI semantic model · Adventure Works DW · June 2026</footer>
+<!-- modal -->
+<div id="overlay" onclick="if(event.target===this)closeModal()"><div id="modal"></div></div>
+
+<!-- what's new drawer -->
+<div class="drawer" id="wnDrawer">
+  <div class="dhead"><h2>★ What's New</h2><button class="dclose" onclick="closeWN()">✕</button></div>
+  <div class="dbody">
+    <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Ask Claude assistant</div><p>Ask plain-English questions about the numbers — revenue, margins, best products, channel economics — and get instant answers from the live dataset.</p></div>
+    <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Drill-down everywhere</div><p>Click countries, categories, product bubbles, business types and reseller rows to open detailed breakdowns — just like Power BI drill-through.</p></div>
+    <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Filter chips &amp; themes</div><p>Slice by channel or category with one click, and switch between Adventure, Ocean and Dusk colour themes.</p></div>
+    <div class="wn"><div class="wd">v1.2 · Jun 2026</div><div class="wt">Split-screen layout</div><p>View any two pages side by side with independent page selectors.</p></div>
+    <div class="wn"><div class="wd">v1.1 · Jun 2026</div><div class="wt">White executive theme</div><p>Clean professional restyle with a header KPI strip showing firm-wide numbers on every page.</p></div>
+    <div class="wn"><div class="wd">v1.0 · Jun 2026</div><div class="wt">Initial release</div><p>Three analysis pages built directly from the Power BI semantic model: Executive Pulse, Product &amp; Profitability, Customers &amp; Territory.</p></div>
+  </div>
+</div>
+
+<!-- chat drawer -->
+<div class="drawer" id="chatDrawer">
+  <div class="dhead"><h2>✦ Ask Claude</h2><button class="dclose" onclick="closeChat()">✕</button></div>
+  <div class="dbody" id="chatBody">
+    <div class="msg bot">Hi! I can answer questions about the Adventure Works numbers — try one of these, or type your own.</div>
+    <div class="sugg" id="chatSugg"></div>
+  </div>
+  <div class="chatinput"><input id="chatIn" placeholder="e.g. Which channel makes more profit?" onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">Send</button></div>
+</div>
+
+<footer>Built from the Power BI semantic model · Adventure Works DW · June 2026 · <a href="https://github.com/mattybarry-rgb/adventure-works-dashboard" style="color:var(--a1)">GitHub</a></footer>
 
 <script src="data.js"></script>
 <script>
 const money = v => Math.abs(v)>=1e6 ? '$'+(v/1e6).toFixed(1)+'M' : Math.abs(v)>=1e3 ? '$'+(v/1e3).toFixed(0)+'K' : '$'+Math.round(v);
 const pct = v => (v*100).toFixed(1)+'%';
 Chart.defaults.font.family = "'Inter',sans-serif";
-Chart.defaults.color = '#7a8aa0';
-const GRID = '#edf0f4', INK = '#1f3a5f';
-// adventure palette
-const C = {forest:'#2f6b4f', moss:'#7ca261', amber:'#d9a441', terra:'#c45a3b', sky:'#5b8fb9', sand:'#cbb287', pine:'#1d4636', clay:'#a9714b'};
 
-let charts = [];
+const THEMES = {
+  adventure:{a1:'#2f6b4f',a2:'#7ca261',a3:'#d9a441',a4:'#c45a3b',a5:'#5b8fb9',a6:'#cbb287',a7:'#1d4636',a8:'#a9714b',bg:'#f7f8fa',card:'#ffffff',border:'#e3e7ee',ink:'#1f3a5f',body:'#3d4f66',muted:'#7a8aa0',grid:'#edf0f4',chipbg:'#eef2ee'},
+  ocean:{a1:'#155e75',a2:'#0e7490',a3:'#f59e0b',a4:'#dc2626',a5:'#3b82f6',a6:'#93c5fd',a7:'#164e63',a8:'#7dd3fc',bg:'#f5f9fb',card:'#ffffff',border:'#dbe7ee',ink:'#0c3247',body:'#33536b',muted:'#71909f',grid:'#e8f1f5',chipbg:'#e8f3f7'},
+  dusk:{a1:'#34d399',a2:'#6ee7b7',a3:'#fbbf24',a4:'#f87171',a5:'#60a5fa',a6:'#a5b4fc',a7:'#10b981',a8:'#fcd34d',bg:'#10182a',card:'#192339',border:'#2a3852',ink:'#eef2f9',body:'#c4cfdf',muted:'#8294ad',grid:'#243250',chipbg:'#22304b'}
+};
+let theme = 'adventure';
+function applyTheme(t){
+  theme = t;
+  const v = THEMES[t], r = document.documentElement.style;
+  ['a1','a2','a3','a4','a5','a6','a7','a8','bg','card','border','ink','body','muted','chipbg'].forEach(k=>r.setProperty('--'+k, v[k]));
+  r.setProperty('--pos', v.a1); r.setProperty('--neg', v.a4);
+  Chart.defaults.color = v.muted;
+  renderAll();
+}
+const T = () => THEMES[theme];
+
+// global filter state
+let channelFilter = 'All';   // page 1
+let catFilter = 'All';       // page 2
+
+// ---------- modal ----------
+const overlay = document.getElementById('overlay'), modal = document.getElementById('modal');
+function openModal(html){ modal.innerHTML = '<button class="mclose" onclick="closeModal()">✕</button>'+html; overlay.classList.add('show'); }
+function closeModal(){ overlay.classList.remove('show'); }
+
+function drillCountry(country){
+  const regions = AW.territories.filter(t=>t.country===country);
+  const tot = regions.reduce((a,r)=>a+r.revenue,0);
+  let h = `<h2>${country} — regional breakdown</h2><div class="msub">${regions.length} region(s) · ${money(tot)} revenue</div>
+  <table><tr><th>Region</th><th>Group</th><th class="num">Revenue</th><th class="num">Profit</th><th class="num">Margin</th><th class="num">Orders</th></tr>`;
+  regions.sort((a,b)=>b.revenue-a.revenue).forEach(r=>{
+    h+=`<tr><td><b>${r.region}</b></td><td>${r.group}</td><td class="num">${money(r.revenue)}</td><td class="num">${money(r.profit)}</td>
+    <td class="num" style="color:${r.margin>0.1?'var(--pos)':r.margin>0.03?'var(--a3)':'var(--neg)'};font-weight:600">${pct(r.margin)}</td><td class="num">${r.orders.toLocaleString()}</td></tr>`;
+  });
+  openModal(h+'</table>');
+}
+function drillCategory(cat){
+  const rows = AW.subcatFY.filter(r=>r[0]===cat);
+  const subs = {};
+  rows.forEach(r=>{const s=subs[r[1]]??={rev:0,prof:0,units:0};s.rev+=r[3];s.prof+=r[4];s.units+=r[5];});
+  const list = Object.entries(subs).sort((a,b)=>b[1].rev-a[1].rev);
+  const tot = list.reduce((a,s)=>a+s[1].rev,0);
+  let h = `<h2>${cat} — subcategory breakdown</h2><div class="msub">${list.length} subcategories · ${money(tot)} revenue</div>
+  <table><tr><th>Subcategory</th><th class="num">Revenue</th><th class="num">Profit</th><th class="num">Margin</th><th class="num">Units</th><th style="width:24%">Share</th></tr>`;
+  const max = list[0][1].rev;
+  list.forEach(([s,d])=>{
+    const m = d.prof/d.rev;
+    h+=`<tr><td><b>${s}</b></td><td class="num">${money(d.rev)}</td><td class="num">${money(d.prof)}</td>
+    <td class="num" style="color:${m>0.1?'var(--pos)':m>0?'var(--a3)':'var(--neg)'};font-weight:600">${pct(m)}</td>
+    <td class="num">${d.units.toLocaleString()}</td><td><div class="databar"><i style="width:${d.rev/max*100}%"></i></div></td></tr>`;
+  });
+  openModal(h+'</table>');
+}
+function drillProduct(name){
+  const p = AW.products.find(x=>x[0]===name); if(!p) return;
+  const catRows = AW.products.filter(x=>x[1]===p[1]);
+  const rank = [...AW.products].sort((a,b)=>b[2]-a[2]).findIndex(x=>x[0]===name)+1;
+  const profit = p[2]*p[3];
+  openModal(`<h2>${p[0]}</h2><div class="msub">${p[1]} · #${rank} of ${AW.products.length} tracked products by revenue</div>
+  <div class="grid kpis" style="grid-template-columns:1fr 1fr">
+    <div class="kpi"><div class="lbl">Revenue</div><div class="val">${money(p[2])}</div></div>
+    <div class="kpi"><div class="lbl">Est. Profit</div><div class="val" style="color:${profit>=0?'var(--pos)':'var(--neg)'}">${money(profit)}</div></div>
+    <div class="kpi"><div class="lbl">Margin</div><div class="val" style="color:${p[3]>=0?'var(--pos)':'var(--neg)'}">${pct(p[3])}</div></div>
+    <div class="kpi"><div class="lbl">Units Sold</div><div class="val">${p[4].toLocaleString()}</div></div>
+  </div>
+  <p style="font-size:13px;margin-top:6px">${p[3]<0?'⚠ This product sells below cost — every unit erodes profit. Candidate for re-pricing or range review.':p[3]>0.3?'★ High-margin hero product — protect availability and consider promotion.':'Solid contributor within the '+p[1]+' range ('+catRows.length+' products tracked).'}</p>`);
+}
+function drillBizType(typeName){
+  const b = AW.businessTypes.find(x=>x.type===typeName); if(!b) return;
+  const rs = AW.topResellers.filter(r=>r.type===typeName).slice(0,8);
+  let h = `<h2>${typeName}</h2><div class="msub">${b.resellers||'Direct channel — no'} resellers · ${b.orders.toLocaleString()} orders</div>
+  <div class="grid kpis" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="kpi"><div class="lbl">Revenue</div><div class="val">${money(b.revenue)}</div></div>
+    <div class="kpi"><div class="lbl">Profit</div><div class="val" style="color:${b.profit>=0?'var(--pos)':'var(--neg)'}">${money(b.profit)}</div></div>
+    <div class="kpi"><div class="lbl">Margin</div><div class="val" style="color:${b.profit>=0?'var(--pos)':'var(--neg)'}">${pct(b.profit/b.revenue)}</div></div>
+  </div>`;
+  if(rs.length){
+    h+=`<h3 style="font-size:11px;letter-spacing:1.2px;color:var(--muted);text-transform:uppercase;margin:12px 0 8px">Largest ${typeName} accounts</h3>
+    <table><tr><th>Reseller</th><th>Country</th><th class="num">Revenue</th><th class="num">Margin</th></tr>`;
+    rs.forEach(r=>{h+=`<tr><td><b>${r.name}</b></td><td>${r.country}</td><td class="num">${money(r.revenue)}</td>
+    <td class="num" style="color:${r.margin>=0?'var(--pos)':'var(--neg)'};font-weight:600">${pct(r.margin)}</td></tr>`;});
+    h+='</table>';
+  } else { h+='<p style="font-size:13px">This is the direct-to-consumer internet channel — the most profitable route to market at 41% margin.</p>'; }
+  openModal(h);
+}
+function drillReseller(name){
+  const r = AW.topResellers.find(x=>x.name===name); if(!r) return;
+  const rank = AW.topResellers.findIndex(x=>x.name===name)+1;
+  openModal(`<h2>${r.name}</h2><div class="msub">${r.type} · ${r.country} · #${rank} reseller by revenue</div>
+  <div class="grid kpis" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="kpi"><div class="lbl">Revenue</div><div class="val">${money(r.revenue)}</div></div>
+    <div class="kpi"><div class="lbl">Margin</div><div class="val" style="color:${r.margin>=0?'var(--pos)':'var(--neg)'}">${pct(r.margin)}</div></div>
+    <div class="kpi"><div class="lbl">Est. Profit</div><div class="val" style="color:${r.margin>=0?'var(--pos)':'var(--neg)'}">${money(r.revenue*r.margin)}</div></div>
+  </div>
+  <p style="font-size:13px;margin-top:6px">${r.margin<0?'⚠ This account generates volume but loses money after product costs — review discount structure before renewal.':'✓ Profitable account — margin above the reseller channel average.'}</p>`);
+}
+
+// ---------- pages ----------
+function chipRow(host, name, options, current, onpick){
+  const box = host.querySelector('[data-c="'+name+'"]');
+  options.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='chip'+(o===current?' active':''); b.textContent=o;
+    b.onclick=()=>{ onpick(o); };
+    box.appendChild(b);
+  });
+}
+
 function renderPage(host, pageId){
   host.querySelectorAll('canvas').forEach(cv=>{const ch=Chart.getChart(cv); if(ch) ch.destroy();});
   host.innerHTML = '';
   host.appendChild(document.getElementById('tpl-'+pageId).content.cloneNode(true));
   const el = n => host.querySelector('[data-c="'+n+'"]');
+  const GRID = T().grid;
 
   if(pageId==='p1'){
-    new Chart(el('cTrend'),{type:'bar',data:{labels:AW.months,datasets:[
-      {label:'Internet',data:AW.internetRev,backgroundColor:C.forest,stack:'r',borderRadius:3},
-      {label:'Reseller',data:AW.resellerRev,backgroundColor:C.sand,stack:'r',borderRadius:3},
-      {label:'Profit',type:'line',data:AW.internetProfit.map((p,i)=>p+AW.resellerProfit[i]),borderColor:C.terra,backgroundColor:C.terra,tension:.35,pointRadius:0,borderWidth:2.5,yAxisID:'y1'}
-    ]},options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:money},grid:{color:GRID}},
-      y1:{position:'right',grid:{display:false},ticks:{callback:money}}},
+    chipRow(host,'channelChips',['All','Internet','Reseller'],channelFilter,o=>{channelFilter=o;renderAll();});
+    // KPIs respond to filter
+    const iRev=AW.internetRev.reduce((a,b)=>a+b,0), rRev=AW.resellerRev.reduce((a,b)=>a+b,0);
+    const iProf=AW.internetProfit.reduce((a,b)=>a+b,0), rProf=AW.resellerProfit.reduce((a,b)=>a+b,0);
+    const rev = channelFilter==='Internet'?iRev:channelFilter==='Reseller'?rRev:iRev+rRev;
+    const prof = channelFilter==='Internet'?iProf:channelFilter==='Reseller'?rProf:iProf+rProf;
+    el('kpiRow').innerHTML = `
+      <div class="kpi"><div class="lbl">Revenue ${channelFilter!=='All'?'('+channelFilter+')':''}</div><div class="val">${money(rev)}</div><div class="delta up">▲ 52.3% YoY FY20</div></div>
+      <div class="kpi"><div class="lbl">Profit</div><div class="val" style="color:${prof>=0?'var(--ink)':'var(--neg)'}">${money(prof)}</div><div class="delta ${prof>=0?'up':'down'}">${pct(prof/rev)} margin</div></div>
+      <div class="kpi"><div class="lbl">Avg Order Value</div><div class="val">$3,491</div><div class="delta down">▼ 69.3% YoY FY20</div></div>
+      <div class="kpi"><div class="lbl">Units Sold</div><div class="val">274.8K</div><div class="delta up">▲ 100.5% YoY FY20</div></div>`;
+
+    const dsets=[];
+    if(channelFilter!=='Reseller') dsets.push({label:'Internet',data:AW.internetRev,backgroundColor:T().a1,stack:'r',borderRadius:3});
+    if(channelFilter!=='Internet') dsets.push({label:'Reseller',data:AW.resellerRev,backgroundColor:T().a6,stack:'r',borderRadius:3});
+    const profData = AW.months.map((_,i)=>(channelFilter!=='Reseller'?AW.internetProfit[i]:0)+(channelFilter!=='Internet'?AW.resellerProfit[i]:0));
+    dsets.push({label:'Profit',type:'line',data:profData,borderColor:T().a4,backgroundColor:T().a4,tension:.35,pointRadius:0,borderWidth:2.5,yAxisID:'y1'});
+    new Chart(el('cTrend'),{type:'bar',data:{labels:AW.months,datasets:dsets},options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:money},grid:{color:GRID}},y1:{position:'right',grid:{display:false},ticks:{callback:money}}},
       plugins:{legend:{labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.raw)}}}}});
 
-    new Chart(el('cChannel'),{type:'doughnut',data:{labels:['Reseller','Internet'],datasets:[{data:[80450597,29358677],backgroundColor:[C.sand,C.forest],borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
+    new Chart(el('cChannel'),{type:'doughnut',data:{labels:['Reseller','Internet'],datasets:[{data:[80450597,29358677],backgroundColor:[T().a6,T().a1],borderWidth:2,borderColor:T().card,hoverOffset:8}]},
      options:{maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+pct(c.raw/109809274)+')'}}}}});
 
     const byCountry = {};
     AW.territories.forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
     const cn = Object.entries(byCountry).sort((a,b)=>b[1].rev-a[1].rev);
-    const marginColor = m => m>0.25?C.forest:m>0.12?C.moss:m>0.06?C.amber:C.terra;
+    const marginColor = m => m>0.25?T().a1:m>0.12?T().a2:m>0.06?T().a3:T().a4;
     new Chart(el('cCountry'),{type:'bar',data:{labels:cn.map(c=>c[0]),datasets:[{data:cn.map(c=>c[1].rev),backgroundColor:cn.map(c=>marginColor(c[1].prof/c[1].rev)),borderRadius:5}]},
-     options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false}}},
+     options:{indexAxis:'y',maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillCountry(cn[els[0].index][0]);},
+     scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false}}},
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · margin '+pct(cn[c.dataIndex][1].prof/cn[c.dataIndex][1].rev)}}}}});
 
     const byCat={};AW.subcatFY.forEach(r=>byCat[r[0]]=(byCat[r[0]]||0)+r[3]);
     const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
-    new Chart(el('cCategory'),{type:'bar',data:{labels:cats.map(c=>c[0]),datasets:[{data:cats.map(c=>c[1]),backgroundColor:[C.forest,C.amber,C.sky,C.terra],borderRadius:6}]},
-     options:{maintainAspectRatio:false,scales:{y:{ticks:{callback:money},grid:{color:GRID}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}}}});
+    new Chart(el('cCategory'),{type:'bar',data:{labels:cats.map(c=>c[0]),datasets:[{data:cats.map(c=>c[1]),backgroundColor:[T().a1,T().a3,T().a5,T().a4],borderRadius:6}]},
+     options:{maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillCategory(cats[els[0].index][0]);},
+     scales:{y:{ticks:{callback:money},grid:{color:GRID}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}}}});
   }
 
   if(pageId==='p2'){
-    const catColor={Bikes:C.forest,Components:C.terra,Clothing:C.sky,Accessories:C.amber};
-    new Chart(el('cScatter'),{type:'bubble',data:{datasets:Object.keys(catColor).map(cat=>({
+    chipRow(host,'catChips',['All','Bikes','Components','Clothing','Accessories'],catFilter,o=>{catFilter=o;renderAll();});
+    const catColor={Bikes:T().a1,Components:T().a4,Clothing:T().a5,Accessories:T().a3};
+    const prods = catFilter==='All' ? AW.products : AW.products.filter(p=>p[1]===catFilter);
+    const scatterCats = catFilter==='All' ? Object.keys(catColor) : [catFilter];
+    new Chart(el('cScatter'),{type:'bubble',data:{datasets:scatterCats.map(cat=>({
       label:cat,backgroundColor:catColor[cat]+'B3',
-      data:AW.products.filter(p=>p[1]===cat).map(p=>({x:p[2],y:p[3]*100,r:Math.sqrt(p[4])/4+3,n:p[0]}))
-    }))},options:{maintainAspectRatio:false,scales:{x:{type:'logarithmic',title:{display:true,text:'Revenue (log)'},ticks:{callback:money},grid:{color:GRID}},
-     y:{title:{display:true,text:'Margin %'},grid:{color:GRID}}},
+      data:prods.filter(p=>p[1]===cat).map(p=>({x:p[2],y:p[3]*100,r:Math.sqrt(p[4])/4+3,n:p[0]}))
+    }))},options:{maintainAspectRatio:false,onClick:(e,els)=>{if(els.length){const d=e.chart.data.datasets[els[0].datasetIndex].data[els[0].index];drillProduct(d.n);}},
+     scales:{x:{type:'logarithmic',title:{display:true,text:'Revenue (log)'},ticks:{callback:money},grid:{color:GRID}},y:{title:{display:true,text:'Margin %'},grid:{color:GRID}}},
      plugins:{legend:{labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.raw.n+': '+money(c.raw.x)+' · '+c.raw.y.toFixed(1)+'%'}}}}});
 
-    const subTotals={};AW.subcatFY.forEach(r=>subTotals[r[1]]=(subTotals[r[1]]||0)+r[3]);
+    const fRows = catFilter==='All' ? AW.subcatFY : AW.subcatFY.filter(r=>r[0]===catFilter);
+    const subTotals={};fRows.forEach(r=>subTotals[r[1]]=(subTotals[r[1]]||0)+r[3]);
     const topSubs=Object.entries(subTotals).sort((a,b)=>b[1]-a[1]).slice(0,8).map(s=>s[0]);
     const fys=['FY2018','FY2019','FY2020'];
-    const subColors=[C.forest,C.moss,C.pine,C.amber,C.sand,C.terra,C.sky,C.clay];
+    const subColors=[T().a1,T().a2,T().a7,T().a3,T().a6,T().a4,T().a5,T().a8];
     new Chart(el('cRibbon'),{type:'bar',data:{labels:fys,datasets:topSubs.map((s,i)=>({
       label:s,backgroundColor:subColors[i],borderRadius:3,
-      data:fys.map(fy=>AW.subcatFY.filter(r=>r[1]===s&&r[2]===fy).reduce((a,r)=>a+r[3],0))
+      data:fys.map(fy=>fRows.filter(r=>r[1]===s&&r[2]===fy).reduce((a,r)=>a+r[3],0))
     }))},options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:money},grid:{color:GRID}}},
      plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.raw)}}}}});
 
-    const top10=[...AW.products].sort((a,b)=>b[2]-a[2]).slice(0,10);
-    new Chart(el('cTop10'),{type:'bar',data:{labels:top10.map(p=>p[0]),datasets:[{data:top10.map(p=>p[2]),backgroundColor:top10.map(p=>p[3]>0.15?C.forest:p[3]>0?C.amber:C.terra),borderRadius:5}]},
-     options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{ticks:{font:{size:11}},grid:{display:false}}},
+    const top10=[...prods].sort((a,b)=>b[2]-a[2]).slice(0,10);
+    new Chart(el('cTop10'),{type:'bar',data:{labels:top10.map(p=>p[0]),datasets:[{data:top10.map(p=>p[2]),backgroundColor:top10.map(p=>p[3]>0.15?T().a1:p[3]>0?T().a3:T().a4),borderRadius:5}]},
+     options:{indexAxis:'y',maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillProduct(top10[els[0].index][0]);},
+     scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{ticks:{font:{size:11}},grid:{display:false}}},
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · margin '+pct(top10[c.dataIndex][3])}}}}});
 
     const byCat={};AW.subcatFY.forEach(r=>byCat[r[0]]=(byCat[r[0]]||0)+r[3]);
     const heatCats=['Bikes','Components','Clothing','Accessories'];
-    const heat = m => m==null?'<td></td>':`<td class="num"><span class="heat" style="background:${m>0.2?'#e2efe6':m>0.08?'#f6ecd6':m>0?'#fbf3e4':'#f7e2dc'};color:${m>0?'#1f3a5f':'#c0392b'}">${pct(m)}</span></td>`;
+    const dark = theme==='dusk';
+    const heat = m => m==null?'<td></td>':`<td class="num"><span class="heat" style="background:${m>0.2?(dark?'#1d4636':'#e2efe6'):m>0.08?(dark?'#3d3a22':'#f6ecd6'):m>0?(dark?'#3d3522':'#fbf3e4'):(dark?'#46242a':'#f7e2dc')};color:${m>0?'var(--ink)':'var(--neg)'}">${pct(m)}</span></td>`;
     let ht='<table><tr><th>Category</th>'+fys.map(f=>'<th class="num">'+f+'</th>').join('')+'<th class="num">Revenue (all)</th><th style="width:28%">Share</th></tr>';
     const maxCat=Math.max(...heatCats.map(c=>byCat[c]));
     heatCats.forEach(cat=>{
@@ -260,61 +445,101 @@ function renderPage(host, pageId){
       qRet.push(AW.retCust.slice(i,i+3).reduce((a,b)=>a+b,0));
     }
     new Chart(el('cNewRet'),{type:'bar',data:{labels:qLabels,datasets:[
-      {label:'New',data:qNew,backgroundColor:C.forest,stack:'c',borderRadius:3},
-      {label:'Returning',data:qRet,backgroundColor:C.amber,stack:'c',borderRadius:3}]},
+      {label:'New',data:qNew,backgroundColor:T().a1,stack:'c',borderRadius:3},
+      {label:'Returning',data:qRet,backgroundColor:T().a3,stack:'c',borderRadius:3}]},
      options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:GRID}}},plugins:{legend:{labels:{usePointStyle:true}}}}});
 
     new Chart(el('cBizType'),{type:'bar',data:{labels:AW.businessTypes.map(b=>b.type),datasets:[{data:AW.businessTypes.map(b=>b.revenue),
-     backgroundColor:AW.businessTypes.map(b=>b.profit>1e6?C.forest:b.profit>0?C.sky:C.terra),borderRadius:5}]},
-     options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false}}},
+     backgroundColor:AW.businessTypes.map(b=>b.profit>1e6?T().a1:b.profit>0?T().a5:T().a4),borderRadius:5}]},
+     options:{indexAxis:'y',maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillBizType(AW.businessTypes[els[0].index].type);},
+     scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false}}},
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const b=AW.businessTypes[c.dataIndex];return money(b.revenue)+' rev · '+money(b.profit)+' profit';}}}}}});
 
     let rt='<table><tr><th>Reseller</th><th>Type</th><th>Country</th><th class="num">Revenue</th><th class="num">Margin</th></tr>';
     AW.topResellers.forEach(r=>{
-      const mc=r.margin>=0.05?'var(--pos)':r.margin>=0?'var(--amber)':'var(--neg)';
-      rt+=`<tr><td><b>${r.name}</b></td><td><span class="pill">${r.type.replace('Value Added Reseller','VAR').replace('Specialty Bike Shop','Specialty')}</span></td>
+      const mc=r.margin>=0.05?'var(--pos)':r.margin>=0?'var(--a3)':'var(--neg)';
+      rt+=`<tr class="clickable" data-r="${r.name}"><td><b>${r.name}</b></td><td><span class="pill">${r.type.replace('Value Added Reseller','VAR').replace('Specialty Bike Shop','Specialty')}</span></td>
       <td>${r.country}</td><td class="num">${money(r.revenue)}</td><td class="num" style="color:${mc};font-weight:600">${pct(r.margin)}</td></tr>`;
     });
     el('resellerTable').innerHTML=rt+'</table>';
+    el('resellerTable').querySelectorAll('tr.clickable').forEach(tr=>tr.onclick=()=>drillReseller(tr.dataset.r));
 
     const st=AW.customerStates.slice(0,12);
-    new Chart(el('cStates'),{type:'bar',data:{labels:st.map(s=>s.state),datasets:[{data:st.map(s=>s.revenue),backgroundColor:C.moss,borderRadius:5}]},
+    new Chart(el('cStates'),{type:'bar',data:{labels:st.map(s=>s.state),datasets:[{data:st.map(s=>s.revenue),backgroundColor:T().a2,borderRadius:5}]},
      options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false},ticks:{font:{size:11}}}},
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · '+st[c.dataIndex].customers.toLocaleString()+' customers'}}}}});
   }
 }
 
+// ---------- layout & nav ----------
 const hostA = document.querySelector('#paneA .pagehost');
 const hostB = document.querySelector('#paneB .pagehost');
 const selA = document.getElementById('selA'), selB = document.getElementById('selB');
 let split = false;
-
-function setSingle(pageId){
-  selA.value = pageId;
-  renderPage(hostA, pageId);
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.p===pageId));
+function renderAll(){
+  renderPage(hostA, selA.value);
+  if(split) renderPage(hostB, selB.value);
 }
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ if(split){selA.value=b.dataset.p; renderPage(hostA,b.dataset.p);} setSingle(b.dataset.p); });
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  selA.value=b.dataset.p; renderPage(hostA,b.dataset.p);
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===b));
+});
 selA.onchange = ()=>renderPage(hostA, selA.value);
 selB.onchange = ()=>renderPage(hostB, selB.value);
-
-document.getElementById('laySingle').onclick = ()=>{
-  split=false;
+document.getElementById('laySingle').onclick = ()=>{ split=false;
   document.getElementById('panes').classList.remove('split');
   document.getElementById('paneB').style.display='none';
   document.getElementById('laySingle').classList.add('active');
-  document.getElementById('laySplit').classList.remove('active');
-};
-document.getElementById('laySplit').onclick = ()=>{
-  split=true;
+  document.getElementById('laySplit').classList.remove('active'); };
+document.getElementById('laySplit').onclick = ()=>{ split=true;
   document.getElementById('panes').classList.add('split');
   document.getElementById('paneB').style.display='block';
   document.getElementById('laySplit').classList.add('active');
   document.getElementById('laySingle').classList.remove('active');
-  renderPage(hostB, selB.value);
-};
+  renderPage(hostB, selB.value); };
+document.getElementById('themeSel').onchange = e=>applyTheme(e.target.value);
 
-renderPage(hostA, 'p1');
+// ---------- drawers ----------
+function openWN(){ document.getElementById('wnDrawer').classList.add('open'); closeChat(); }
+function closeWN(){ document.getElementById('wnDrawer').classList.remove('open'); }
+function openChat(){ document.getElementById('chatDrawer').classList.add('open'); closeWN(); }
+function closeChat(){ document.getElementById('chatDrawer').classList.remove('open'); }
+
+// ---------- Ask Claude (local Q&A over the dataset) ----------
+const SUGGESTIONS = ["Which channel makes more profit?","What's our best product?","Why is Warehouse losing money?","Which country has the best margin?","How fast are we growing?","Which products lose money?"];
+const QA = [
+  {k:['channel','profit','internet','reseller'], a:()=>"<b>Internet is far more profitable.</b> Internet direct made <b>$12.1M profit on $29.4M revenue (41% margin)</b>, while the Reseller channel made just $0.5M on $80.5M (0.6%). Resellers drive volume; internet drives nearly all the profit."},
+  {k:['best product','top product','best seller','biggest product'], a:()=>{const p=[...AW.products].sort((a,b)=>b[2]-a[2])[0];return `<b>${p[0]}</b> is the #1 product — ${money(p[2])} revenue at ${pct(p[3])} margin, ${p[4].toLocaleString()} units. The Mountain-200 family holds the entire top 6.`;}},
+  {k:['warehouse','losing','loss'], a:()=>"The <b>Warehouse</b> business type generated <b>$38.7M revenue but lost $4.8K overall</b>. Heavy discounting means most large warehouse accounts (e.g. Retail Mall, Health Spa Ltd) sell below product cost. Compare with internet direct: 41% margin. Recommendation: review the discount structure on warehouse contracts."},
+  {k:['country','margin','best country','geography'], a:()=>"<b>Australia has the best margin by far — 33.6%</b> on $10.7M revenue. The US Southwest brings the most revenue ($24.2M, 9.7% margin), while US Central/Southeast/Northeast run under 2%. Germany (22.1%) and the UK (18.2%) are quietly excellent."},
+  {k:['grow','growth','trend','yoy'], a:()=>"Revenue grew <b>+42.8% in FY2019</b> and <b>+52.3% in FY2020</b> ($23.9M → $34.1M → $51.9M). The FY2020 surge came from internet sales exploding from ~$0.5M to ~$1.8M/month while average order value fell — many more, smaller orders."},
+  {k:['lose money','negative','worst product','unprofitable'], a:()=>{const losers=AW.products.filter(p=>p[3]<0).sort((a,b)=>a[3]-b[3]);return `<b>${losers.length} of the top products sell at negative margin.</b> Worst offenders: ${losers.slice(0,3).map(p=>p[0]+' ('+pct(p[3])+')').join(', ')}. Touring-3000 bikes and logo jerseys are consistent money-losers.`;}},
+  {k:['customer','new','returning'], a:()=>"The customer base exploded in FY2020: <b>12,854 new customers</b> vs 3,171 in FY2019. Returning customers also grew strongly (189 → 4,761), showing early repeat-purchase behaviour in the internet channel."},
+  {k:['revenue','total','sales'], a:()=>"<b>Total revenue is $109.8M</b> across FY2018–FY2020: Reseller $80.5M (73%) + Internet $29.4M (27%). Total profit $12.6M at an 11.4% blended margin."},
+  {k:['category','bikes','accessories','clothing','components'], a:()=>"<b>Bikes dominate: $96.0M (87%)</b> of revenue. Components $11.9M, Clothing $2.6M, Accessories $1.6M. But margins invert that story — Accessories run ~40-60% margins while Bikes average ~12%."},
+  {k:['aov','order value','average order'], a:()=>"Average order value <b>fell from $7,191 (FY19) to $2,206 (FY20)</b> — not a problem, a mix shift: thousands of small internet orders joined the big reseller invoices. Orders grew 5× in the same period."},
+  {k:['recommend','should','action','advice','improve'], a:()=>"Three actions stand out: <b>1)</b> Fix or exit loss-making warehouse contracts (–$4.8K on $38.7M). <b>2)</b> Push the high-margin Accessories range (40-60% margins, tiny share). <b>3)</b> Double-down on Australia — best margin in the business at 33.6% with room to scale."},
+];
+function addMsg(cls, html){
+  const d=document.createElement('div'); d.className='msg '+cls; d.innerHTML=html;
+  document.getElementById('chatBody').appendChild(d);
+  document.getElementById('chatBody').scrollTop=1e6;
+}
+function answer(q){
+  const ql=q.toLowerCase();
+  let best=null,score=0;
+  QA.forEach(item=>{const s=item.k.filter(k=>ql.includes(k)).length; if(s>score){score=s;best=item;}});
+  return best?best.a():"I couldn't match that to the dataset. Try asking about: revenue, growth, channels, products, margins, countries, customers, or recommendations. <i>(This demo answers from the embedded dataset — the production version connects to a live Claude API over your semantic model.)</i>";
+}
+function sendChat(){
+  const inp=document.getElementById('chatIn'); const q=inp.value.trim(); if(!q)return;
+  inp.value=''; addMsg('user',q);
+  setTimeout(()=>addMsg('bot',answer(q)),350);
+}
+const sg=document.getElementById('chatSugg');
+SUGGESTIONS.forEach(s=>{const b=document.createElement('button');b.textContent=s;b.onclick=()=>{addMsg('user',s);setTimeout(()=>addMsg('bot',answer(s)),350);};sg.appendChild(b);});
+
+applyTheme('adventure');
 </script>
 </body>
 </html>
