@@ -112,7 +112,7 @@
 <body>
 <header>
   <div class="brand">Adventure<em>Works</em></div>
-  <button class="askbtn" onclick="openChat()">✦ Ask Claude</button>
+  <button class="askbtn" onclick="openChat()">✦ Ask Chatbot</button>
   <div class="kpistrip">
     <div class="skpi"><div class="l">Revenue (All)</div><div class="v">$109.8M</div></div>
     <div class="skpi"><div class="l">Profit</div><div class="v amber">$12.6M</div></div>
@@ -205,7 +205,7 @@
 <div class="drawer" id="wnDrawer">
   <div class="dhead"><h2>★ What's New</h2><button class="dclose" onclick="closeWN()">✕</button></div>
   <div class="dbody">
-    <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Ask Claude assistant</div><p>Ask plain-English questions about the numbers — revenue, margins, best products, channel economics — and get instant answers from the live dataset.</p></div>
+    <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Ask Chatbot assistant</div><p>Ask plain-English questions about the numbers — revenue, margins, best products, channel economics — and get instant answers from the live dataset.</p></div>
     <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Drill-down everywhere</div><p>Click countries, categories, product bubbles, business types and reseller rows to open detailed breakdowns — just like Power BI drill-through.</p></div>
     <div class="wn"><div class="wd">v1.3 · Jun 2026</div><div class="wt">Filter chips &amp; themes</div><p>Slice by channel or category with one click, and switch between Adventure, Ocean and Dusk colour themes.</p></div>
     <div class="wn"><div class="wd">v1.2 · Jun 2026</div><div class="wt">Split-screen layout</div><p>View any two pages side by side with independent page selectors.</p></div>
@@ -216,7 +216,7 @@
 
 <!-- chat drawer -->
 <div class="drawer" id="chatDrawer">
-  <div class="dhead"><h2>✦ Ask Claude</h2><button class="dclose" onclick="closeChat()">✕</button></div>
+  <div class="dhead"><h2>✦ Ask Chatbot</h2><button class="dclose" onclick="closeChat()">✕</button></div>
   <div class="dbody" id="chatBody">
     <div class="msg bot">Hi! I can answer questions about the Adventure Works numbers — try one of these, or type your own.</div>
     <div class="sugg" id="chatSugg"></div>
@@ -505,7 +505,7 @@ function closeWN(){ document.getElementById('wnDrawer').classList.remove('open')
 function openChat(){ document.getElementById('chatDrawer').classList.add('open'); closeWN(); }
 function closeChat(){ document.getElementById('chatDrawer').classList.remove('open'); }
 
-// ---------- Ask Claude (local Q&A over the dataset) ----------
+// ---------- Ask Chatbot (local Q&A over the dataset) ----------
 const SUGGESTIONS = ["Which channel makes more profit?","What's our best product?","Why is Warehouse losing money?","Which country has the best margin?","How fast are we growing?","Which products lose money?"];
 const QA = [
   {k:['channel','profit','internet','reseller'], a:()=>"<b>Internet is far more profitable.</b> Internet direct made <b>$12.1M profit on $29.4M revenue (41% margin)</b>, while the Reseller channel made just $0.5M on $80.5M (0.6%). Resellers drive volume; internet drives nearly all the profit."},
