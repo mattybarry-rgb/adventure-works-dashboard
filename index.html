@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adventure Works — Sales Intelligence</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0d1421; --navy2:#131d30; --card:#1a2740; --teal:#2dd4bf; --amber:#fbbf24;
+    --ink:#e8edf5; --muted:#8fa3bf;
+    --p2-bg:#faf7f2; --p2-card:#ffffff; --purple:#6d28d9; --coral:#f97362; --p2-ink:#2a2438;
+    --p3-bg:#1e293b; --p3-card:#27364a; --emerald:#34d399; --gold:#eab308;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--ink);min-height:100vh}
+  nav{display:flex;gap:6px;padding:14px 28px;background:#0a101b;position:sticky;top:0;z-index:10;align-items:center;border-bottom:1px solid #1f2d45}
+  nav .brand{font-weight:800;letter-spacing:.5px;margin-right:auto;font-size:18px}
+  nav .brand span{color:var(--teal)}
+  nav button{font-family:inherit;font-size:14px;font-weight:600;padding:9px 20px;border-radius:99px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;transition:.2s}
+  nav button:hover{color:var(--ink)}
+  nav button.active{background:var(--teal);color:#04221d}
+  .page{display:none;padding:26px 28px 60px;max-width:1500px;margin:0 auto}
+  .page.show{display:block}
+  h1{font-size:26px;font-weight:800;margin-bottom:2px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:16px}
+  .kpi{background:linear-gradient(145deg,var(--card),#16213a);border:1px solid #24355a;border-radius:16px;padding:18px 20px}
+  .kpi .lbl{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted)}
+  .kpi .val{font-size:28px;font-weight:800;margin:4px 0 2px;font-family:'JetBrains Mono',monospace}
+  .kpi .delta{font-size:13px;font-weight:600}
+  .up{color:var(--teal)} .down{color:#f87171}
+  .card{background:var(--card);border:1px solid #24355a;border-radius:16px;padding:18px 20px}
+  .card h3{font-size:15px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-size:12px}
+  .row2{grid-template-columns:2fr 1fr}
+  .row3{grid-template-columns:1fr 1fr 1fr}
+  .rowhalf{grid-template-columns:1fr 1fr}
+  .chartbox{position:relative;height:300px}
+  .chartbox.tall{height:380px}
+  .chartbox.short{height:240px}
+  /* page 2 light theme */
+  #p2{background:var(--p2-bg);color:var(--p2-ink);border-radius:0}
+  body.theme2{background:var(--p2-bg)}
+  body.theme3{background:var(--p3-bg)}
+  #p2 .card{background:var(--p2-card);border:1px solid #e9e2d8;box-shadow:0 2px 12px rgba(80,60,120,.07)}
+  #p2 .card h3{color:#8a7fa8}
+  #p2 h1{color:var(--purple)} #p2 .sub{color:#8a7fa8}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.65}
+  td{padding:8px 10px;border-top:1px solid rgba(128,128,160,.15)}
+  td.num{font-family:'JetBrains Mono',monospace;text-align:right}
+  th.num{text-align:right}
+  .heat{border-radius:6px;padding:4px 8px;display:inline-block;min-width:64px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .databar{position:relative;height:18px;border-radius:4px;background:rgba(109,40,217,.12)}
+  .databar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--coral))}
+  /* page 3 slate */
+  #p3 .card{background:var(--p3-card);border:1px solid #344a66}
+  #p3 h1 span{color:var(--emerald)}
+  .pill{display:inline-block;font-size:11px;padding:2px 10px;border-radius:99px;font-weight:600}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+  @media(max-width:900px){.row2,.row3,.rowhalf{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand">ADVENTURE <span>WORKS</span></div>
+  <button class="active" data-p="p1">Executive Pulse</button>
+  <button data-p="p2">Product &amp; Profitability</button>
+  <button data-p="p3">Customers &amp; Territory</button>
+</nav>
+
+<!-- PAGE 1 -->
+<section class="page show" id="p1">
+  <h1>Executive Pulse</h1>
+  <div class="sub">FY2018 – FY2020 · $109.8M total revenue · Internet + Reseller channels</div>
+  <div class="grid kpis" id="kpiRow"></div>
+  <div class="grid row2">
+    <div class="card"><h3>Monthly Revenue by Channel + Profit</h3><div class="chartbox tall"><canvas id="cTrend"></canvas></div></div>
+    <div class="card"><h3>Revenue by Channel</h3><div class="chartbox tall"><canvas id="cChannel"></canvas></div></div>
+  </div>
+  <div class="grid rowhalf" style="margin-top:16px">
+    <div class="card"><h3>Revenue by Country (colour = margin)</h3><div class="chartbox"><canvas id="cCountry"></canvas></div></div>
+    <div class="card"><h3>Category Revenue Ranking</h3><div class="chartbox"><canvas id="cCategory"></canvas></div></div>
+  </div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page" id="p2">
+  <h1>Product &amp; Profitability</h1>
+  <div class="sub">397 products · 4 categories · revenue vs margin economics</div>
+  <div class="grid rowhalf">
+    <div class="card"><h3>Stars &amp; Dogs — Revenue vs Margin (bubble = units)</h3><div class="chartbox tall"><canvas id="cScatter"></canvas></div></div>
+    <div class="card"><h3>Subcategory Revenue by Fiscal Year</h3><div class="chartbox tall"><canvas id="cRibbon"></canvas></div></div>
+  </div>
+  <div class="grid rowhalf" style="margin-top:16px">
+    <div class="card"><h3>Top 10 Products by Revenue</h3><div class="chartbox"><canvas id="cTop10"></canvas></div></div>
+    <div class="card"><h3>Margin Heatmap — Category × Fiscal Year</h3><div id="heatTable"></div></div>
+  </div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page" id="p3">
+  <h1>Customers &amp; <span>Territory</span></h1>
+  <div class="sub">18,485 customers · 702 resellers · 3 continental groups</div>
+  <div class="grid rowhalf">
+    <div class="card"><h3>New vs Returning Customers by Quarter</h3><div class="chartbox"><canvas id="cNewRet"></canvas></div></div>
+    <div class="card"><h3>Channel Economics — Revenue by Business Type</h3><div class="chartbox"><canvas id="cBizType"></canvas></div></div>
+  </div>
+  <div class="grid row2" style="margin-top:16px">
+    <div class="card"><h3>Top 15 Resellers</h3><div id="resellerTable" style="max-height:420px;overflow:auto"></div></div>
+    <div class="card"><h3>Top Customer Regions (Internet)</h3><div class="chartbox tall"><canvas id="cStates"></canvas></div></div>
+  </div>
+</section>
+
+<footer>Built from the Power BI semantic model · Adventure Works DW · Generated June 2026</footer>
+
+<script src="data.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const money = v => v>=1e6 ? '$'+(v/1e6).toFixed(1)+'M' : v>=1e3 ? '$'+(v/1e3).toFixed(0)+'K' : '$'+Math.round(v);
+const pct = v => (v*100).toFixed(1)+'%';
+Chart.defaults.font.family = "'Outfit',sans-serif";
+Chart.defaults.color = '#8fa3bf';
+
+// nav
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));
+  b.classList.add('active'); $(b.dataset.p).classList.add('show');
+  document.body.className = b.dataset.p==='p2'?'theme2':b.dataset.p==='p3'?'theme3':'';
+});
+
+// ---- KPIs ----
+const fy20 = AW.fiscalYears[2], fy19 = AW.fiscalYears[1];
+const kpis = [
+  {l:'Total Revenue', v:money(AW.totals.revenue), d:fy20.yoy, dl:'YoY FY20'},
+  {l:'Profit', v:money(AW.totals.profit), d:(fy20.profit-fy19.profit)/fy19.profit, dl:'YoY FY20'},
+  {l:'Profit Margin', v:pct(AW.totals.profit/AW.totals.revenue), d:fy20.margin-fy19.margin, dl:'pts vs FY19', pts:true},
+  {l:'Orders', v:AW.totals.orders.toLocaleString(), d:(fy20.orders-fy19.orders)/fy19.orders, dl:'YoY FY20'},
+  {l:'Customers', v:AW.totals.customers.toLocaleString(), d:(fy20.customers-fy19.customers)/fy19.customers, dl:'YoY FY20'}
+];
+$('kpiRow').innerHTML = kpis.map(k=>{
+  const up = k.d>=0, txt = k.pts ? ((k.d*100).toFixed(1)+' '+k.dl) : (pct(Math.abs(k.d))+' '+k.dl);
+  return `<div class="kpi"><div class="lbl">${k.l}</div><div class="val">${k.v}</div>
+  <div class="delta ${up?'up':'down'}">${up?'▲':'▼'} ${txt}</div></div>`;
+}).join('');
+
+// ---- P1: trend ----
+new Chart($('cTrend'),{type:'bar',data:{labels:AW.months,datasets:[
+  {label:'Internet',data:AW.internetRev,backgroundColor:'#2dd4bf',stack:'r',borderRadius:3},
+  {label:'Reseller',data:AW.resellerRev,backgroundColor:'#3b82f6',stack:'r',borderRadius:3},
+  {label:'Profit',type:'line',data:AW.internetProfit.map((p,i)=>p+AW.resellerProfit[i]),borderColor:'#fbbf24',backgroundColor:'#fbbf24',tension:.35,pointRadius:0,borderWidth:2.5,yAxisID:'y1'}
+]},options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+  scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:money},grid:{color:'#22304d'}},
+  y1:{position:'right',grid:{display:false},ticks:{callback:money}}},
+  plugins:{legend:{labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.raw)}}}}});
+
+// ---- P1: channel donut ----
+new Chart($('cChannel'),{type:'doughnut',data:{labels:['Reseller','Internet'],datasets:[{data:[80450597,29358677],backgroundColor:['#3b82f6','#2dd4bf'],borderWidth:0,hoverOffset:8}]},
+ options:{maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+pct(c.raw/109809274)+')'}}}}});
+
+// ---- P1: country ----
+const byCountry = {};
+AW.territories.forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
+const cn = Object.entries(byCountry).sort((a,b)=>b[1].rev-a[1].rev);
+const marginColor = m => m>0.25?'#2dd4bf':m>0.12?'#60a5fa':m>0.06?'#fbbf24':'#f87171';
+new Chart($('cCountry'),{type:'bar',data:{labels:cn.map(c=>c[0]),datasets:[{data:cn.map(c=>c[1].rev),backgroundColor:cn.map(c=>marginColor(c[1].prof/c[1].rev)),borderRadius:6}]},
+ options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:'#22304d'}},y:{grid:{display:false}}},
+ plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · margin '+pct(cn[c.dataIndex][1].prof/cn[c.dataIndex][1].rev)}}}}});
+
+// ---- P1: category ----
+const byCat={};AW.subcatFY.forEach(r=>byCat[r[0]]=(byCat[r[0]]||0)+r[3]);
+const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+new Chart($('cCategory'),{type:'bar',data:{labels:cats.map(c=>c[0]),datasets:[{data:cats.map(c=>c[1]),backgroundColor:['#2dd4bf','#3b82f6','#fbbf24','#a78bfa'],borderRadius:8}]},
+ options:{maintainAspectRatio:false,scales:{y:{ticks:{callback:money},grid:{color:'#22304d'}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}}}});
+
+// ---- P2: scatter ----
+const catColor={Bikes:'#6d28d9',Components:'#f97362',Clothing:'#0ea5e9',Accessories:'#10b981'};
+new Chart($('cScatter'),{type:'bubble',data:{datasets:Object.keys(catColor).map(cat=>({
+  label:cat,backgroundColor:catColor[cat]+'B3',
+  data:AW.products.filter(p=>p[1]===cat).map(p=>({x:p[2],y:p[3]*100,r:Math.sqrt(p[4])/4+3,n:p[0]}))
+}))},options:{maintainAspectRatio:false,scales:{x:{type:'logarithmic',title:{display:true,text:'Revenue (log)'},ticks:{callback:money},grid:{color:'#eee5d8'}},
+ y:{title:{display:true,text:'Margin %'},grid:{color:'#eee5d8'}}},
+ plugins:{legend:{labels:{usePointStyle:true,color:'#2a2438'}},tooltip:{callbacks:{label:c=>c.raw.n+': '+money(c.raw.x)+' · '+c.raw.y.toFixed(1)+'%'}}}}});
+
+// ---- P2: ribbon (stacked subcat by FY, top subcats) ----
+const subTotals={};AW.subcatFY.forEach(r=>subTotals[r[1]]=(subTotals[r[1]]||0)+r[3]);
+const topSubs=Object.entries(subTotals).sort((a,b)=>b[1]-a[1]).slice(0,8).map(s=>s[0]);
+const fys=['FY2018','FY2019','FY2020'];
+const subColors=['#6d28d9','#8b5cf6','#a78bfa','#f97362','#fb923c','#0ea5e9','#10b981','#eab308'];
+new Chart($('cRibbon'),{type:'bar',data:{labels:fys,datasets:topSubs.map((s,i)=>({
+  label:s,backgroundColor:subColors[i],borderRadius:3,
+  data:fys.map(fy=>AW.subcatFY.filter(r=>r[1]===s&&r[2]===fy).reduce((a,r)=>a+r[3],0))
+}))},options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#2a2438'}},y:{stacked:true,ticks:{callback:money},grid:{color:'#eee5d8'}}},
+ plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,color:'#2a2438'}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.raw)}}}}});
+
+// ---- P2: top10 ----
+const top10=[...AW.products].sort((a,b)=>b[2]-a[2]).slice(0,10);
+new Chart($('cTop10'),{type:'bar',data:{labels:top10.map(p=>p[0]),datasets:[{data:top10.map(p=>p[2]),backgroundColor:top10.map(p=>p[3]>0.15?'#10b981':p[3]>0?'#6d28d9':'#f97362'),borderRadius:5}]},
+ options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:'#eee5d8'}},y:{ticks:{color:'#2a2438',font:{size:11}},grid:{display:false}}},
+ plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · margin '+pct(top10[c.dataIndex][3])}}}}});
+
+// ---- P2: heat table ----
+const heatCats=['Bikes','Components','Clothing','Accessories'];
+const heat = m => m==null?'<td></td>':`<td class="num"><span class="heat" style="background:${m>0.2?'#d1fae5':m>0.08?'#ede9fe':m>0?'#fef3c7':'#fee2e2'};color:${m>0?'#1f2937':'#b91c1c'}">${pct(m)}</span></td>`;
+let ht='<table><tr><th>Category</th>'+fys.map(f=>'<th class="num">'+f+'</th>').join('')+'<th class="num">Revenue (all)</th><th style="width:30%">Share</th></tr>';
+const maxCat=Math.max(...heatCats.map(c=>byCat[c]));
+heatCats.forEach(cat=>{
+  ht+='<tr><td><b>'+cat+'</b></td>';
+  fys.forEach(fy=>{
+    const rows=AW.subcatFY.filter(r=>r[0]===cat&&r[2]===fy);
+    if(!rows.length){ht+=heat(null);return;}
+    const rev=rows.reduce((a,r)=>a+r[3],0),prof=rows.reduce((a,r)=>a+r[4],0);
+    ht+=heat(prof/rev);
+  });
+  ht+=`<td class="num">${money(byCat[cat])}</td><td><div class="databar"><i style="width:${byCat[cat]/maxCat*100}%"></i></div></td></tr>`;
+});
+$('heatTable').innerHTML=ht+'</table>';
+
+// ---- P3: new vs returning quarterly ----
+const qLabels=[],qNew=[],qRet=[];
+for(let i=0;i<36;i+=3){
+  const y=2017+Math.floor((i+6)/12), q='Q'+(Math.floor(((i+6)%12)/3)+1);
+  qLabels.push(q+" '"+String(y).slice(2));
+  qNew.push(AW.newCust.slice(i,i+3).reduce((a,b)=>a+b,0));
+  qRet.push(AW.retCust.slice(i,i+3).reduce((a,b)=>a+b,0));
+}
+new Chart($('cNewRet'),{type:'bar',data:{labels:qLabels,datasets:[
+  {label:'New',data:qNew,backgroundColor:'#34d399',stack:'c',borderRadius:3},
+  {label:'Returning',data:qRet,backgroundColor:'#eab308',stack:'c',borderRadius:3}]},
+ options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#344a66'}}},plugins:{legend:{labels:{usePointStyle:true}}}}});
+
+// ---- P3: business type ----
+new Chart($('cBizType'),{type:'bar',data:{labels:AW.businessTypes.map(b=>b.type),datasets:[{data:AW.businessTypes.map(b=>b.revenue),
+ backgroundColor:AW.businessTypes.map(b=>b.profit>1e6?'#34d399':b.profit>0?'#60a5fa':'#f87171'),borderRadius:6}]},
+ options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:'#344a66'}},y:{grid:{display:false}}},
+ plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const b=AW.businessTypes[c.dataIndex];return money(b.revenue)+' rev · '+money(b.profit)+' profit';}}}}}});
+
+// ---- P3: reseller table ----
+let rt='<table><tr><th>Reseller</th><th>Type</th><th>Country</th><th class="num">Revenue</th><th class="num">Margin</th></tr>';
+AW.topResellers.forEach(r=>{
+  const mc=r.margin>=0.05?'#34d399':r.margin>=0?'#eab308':'#f87171';
+  rt+=`<tr><td>${r.name}</td><td><span class="pill" style="background:rgba(96,165,250,.15);color:#93c5fd">${r.type.replace('Value Added Reseller','VAR').replace('Specialty Bike Shop','Specialty')}</span></td>
+  <td>${r.country}</td><td class="num">${money(r.revenue)}</td><td class="num" style="color:${mc};font-weight:600">${pct(r.margin)}</td></tr>`;
+});
+$('resellerTable').innerHTML=rt+'</table>';
+
+// ---- P3: states ----
+const st=AW.customerStates.slice(0,12);
+new Chart($('cStates'),{type:'bar',data:{labels:st.map(s=>s.state),datasets:[{data:st.map(s=>s.revenue),backgroundColor:'#34d399',borderRadius:5}]},
+ options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:'#344a66'}},y:{grid:{display:false},ticks:{font:{size:11}}}},
+ plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · '+st[c.dataIndex].customers.toLocaleString()+' customers'}}}}});
+</script>
+</body>
+</html>
