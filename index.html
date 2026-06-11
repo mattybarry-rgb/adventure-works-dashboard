@@ -182,6 +182,7 @@
   <div class="sub">FY2018 – FY2020 · monthly trend, channel mix &amp; geography</div>
   <div class="chips" data-c="channelChips"><span class="lbl">CHANNEL:</span></div>
   <div class="chips" data-c="fyChips"><span class="lbl">PERIOD:</span></div>
+  <div class="chips" data-c="geoChips"><span class="lbl">GEOGRAPHY:</span></div>
   <div class="grid kpis" data-c="kpiRow"></div>
   <div class="grid row2">
     <div class="card"><h3>Monthly Revenue + Profit</h3><div class="chartbox tall"><canvas data-c="cTrend"></canvas></div></div>
@@ -210,6 +211,7 @@
 <template id="tpl-p3"><section class="page">
   <h1>Customers &amp; Territory</h1>
   <div class="sub">18,485 customers · 702 resellers · 3 continental groups</div>
+  <div class="chips" data-c="geoChips3"><span class="lbl">GEOGRAPHY:</span></div>
   <div class="grid rowhalf">
     <div class="card"><h3>New vs Returning Customers by Quarter</h3><div class="chartbox"><canvas data-c="cNewRet"></canvas></div></div>
     <div class="card t-terra"><h3>Channel Economics — Revenue by Business Type</h3><div class="chartbox"><canvas data-c="cBizType"></canvas></div><div class="hint">Click a bar to see its top resellers</div></div>
@@ -277,6 +279,7 @@ let fyFilter = 'All';
 let countryFilter = 'All';
 let mFrom = 0, mTo = 35;     // month index range
 const FY_RANGE = {All:[0,36], FY2018:[0,12], FY2019:[12,24], FY2020:[24,36]};
+const COUNTRIES = ['All','United States','Canada','United Kingdom','France','Germany','Australia'];
 const fySlice = arr => arr.slice(mFrom, mTo+1);
 
 
@@ -400,6 +403,7 @@ function renderPage(host, pageId){
   if(pageId==='p1'){
     chipRow(host,'channelChips',['All','Internet','Reseller'],channelFilter,o=>{channelFilter=o;renderAll();});
     chipRow(host,'fyChips',['All','FY2018','FY2019','FY2020'],fyFilter,o=>{fyFilter=o;mFrom=FY_RANGE[o][0];mTo=FY_RANGE[o][1]-1;renderAll();});
+    chipRow(host,'geoChips',COUNTRIES,countryFilter,o=>{countryFilter=o;renderAll();});
     // filtered monthly series
     const mLabels=fySlice(AW.months);
     const iRevM=fySlice(AW.internetRev), rRevM=fySlice(AW.resellerRev);
@@ -500,6 +504,7 @@ function renderPage(host, pageId){
   }
 
   if(pageId==='p3'){
+    chipRow(host,'geoChips3',COUNTRIES,countryFilter,o=>{countryFilter=o;renderAll();});
     const qLabels=[],qNew=[],qRet=[];
     for(let i=0;i<36;i+=3){
       const y=2017+Math.floor((i+6)/12), q='Q'+(Math.floor(((i+6)%12)/3)+1);
