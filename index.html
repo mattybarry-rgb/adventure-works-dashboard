@@ -83,6 +83,15 @@
   .databar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2))}
   .pill{display:inline-block;font-size:10.5px;padding:2px 9px;border-radius:99px;font-weight:600;background:#eef5fb;color:var(--a5)}
   footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+  /* global filter bar */
+  .filterbar{background:var(--card);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .filterbar .lbl{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--muted)}
+  .fgroup{display:flex;align-items:center;gap:6px}
+  .fgroup label{font-size:11px;font-weight:600;color:var(--muted)}
+  .fgroup select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);padding:6px 10px;border:1px solid var(--border);border-radius:99px;background:var(--card);cursor:pointer;max-width:120px}
+  .fgroup select.activef{border-color:var(--a1);background:var(--chipbg)}
+  .resetbtn{font-family:inherit;font-size:12px;font-weight:600;padding:6px 14px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer}
+  .resetbtn:hover{color:var(--neg);border-color:var(--neg)}
   /* insight ticker */
   .ticker{background:var(--card);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:12px;overflow:hidden}
   .ticker .tag{font-size:10px;font-weight:700;letter-spacing:1.4px;color:#fff;background:var(--a4);padding:3px 10px;border-radius:99px;white-space:nowrap}
@@ -155,6 +164,16 @@
     <button class="lay active" id="laySingle" title="Single page"><i></i></button>
     <button class="lay" id="laySplit" title="Two pages side by side"><i></i><i></i></button>
   </div>
+</div>
+
+<div class="filterbar">
+  <span class="lbl">FILTERS</span>
+  <div class="fgroup"><label>From</label><select id="fFrom"></select></div>
+  <div class="fgroup"><label>To</label><select id="fTo"></select></div>
+  <div class="fgroup"><label>Channel</label><select id="fChannel"><option>All</option><option>Internet</option><option>Reseller</option></select></div>
+  <div class="fgroup"><label>Category</label><select id="fCat"><option>All</option><option>Bikes</option><option>Components</option><option>Clothing</option><option>Accessories</option></select></div>
+  <div class="fgroup"><label>Country</label><select id="fCountry"><option>All</option></select></div>
+  <button class="resetbtn" id="fReset">Reset filters</button>
 </div>
 
 <div class="ticker"><span class="tag">INSIGHT</span><span class="titem" id="tickerItem"></span></div>
@@ -265,11 +284,34 @@ function applyTheme(t){
 const T = () => THEMES[theme];
 
 // global filter state
-let channelFilter = 'All';   // page 1
-let catFilter = 'All';       // page 2
-let fyFilter = 'All';        // page 1 period
+let channelFilter = 'All';
+let catFilter = 'All';
+let fyFilter = 'All';
+let countryFilter = 'All';
+let mFrom = 0, mTo = 35;     // month index range
 const FY_RANGE = {All:[0,36], FY2018:[0,12], FY2019:[12,24], FY2020:[24,36]};
-const fySlice = arr => arr.slice(...FY_RANGE[fyFilter]);
+const fySlice = arr => arr.slice(mFrom, mTo+1);
+
+// ---------- global filter bar ----------
+const fFrom=document.getElementById('fFrom'), fTo=document.getElementById('fTo'),
+      fChannel=document.getElementById('fChannel'), fCat=document.getElementById('fCat'),
+      fCountry=document.getElementById('fCountry');
+AW.months.forEach((m,i)=>{fFrom.add(new Option(m,i)); fTo.add(new Option(m,i));});
+fTo.value=35;
+[...new Set(AW.territories.map(t=>t.country))].sort().forEach(c=>fCountry.add(new Option(c,c)));
+function markActive(){
+  fFrom.classList.toggle('activef',mFrom!==0); fTo.classList.toggle('activef',mTo!==35);
+  fChannel.classList.toggle('activef',channelFilter!=='All');
+  fCat.classList.toggle('activef',catFilter!=='All');
+  fCountry.classList.toggle('activef',countryFilter!=='All');
+}
+function syncBar(){ fFrom.value=mFrom; fTo.value=mTo; fChannel.value=channelFilter; fCat.value=catFilter; fCountry.value=countryFilter; markActive(); }
+fFrom.onchange=()=>{ mFrom=+fFrom.value; if(mFrom>mTo){mTo=mFrom;} fyFilter=null; renderAll(); };
+fTo.onchange=()=>{ mTo=+fTo.value; if(mTo<mFrom){mFrom=mTo;} fyFilter=null; renderAll(); };
+fChannel.onchange=()=>{ channelFilter=fChannel.value; renderAll(); };
+fCat.onchange=()=>{ catFilter=fCat.value; renderAll(); };
+fCountry.onchange=()=>{ countryFilter=fCountry.value; renderAll(); };
+document.getElementById('fReset').onclick=()=>{ mFrom=0;mTo=35;channelFilter='All';catFilter='All';countryFilter='All';fyFilter='All'; renderAll(); };
 
 // ---------- animated count-up + sparklines ----------
 function countUp(el, target, fmt){
@@ -389,7 +431,7 @@ function renderPage(host, pageId){
 
   if(pageId==='p1'){
     chipRow(host,'channelChips',['All','Internet','Reseller'],channelFilter,o=>{channelFilter=o;renderAll();});
-    chipRow(host,'fyChips',['All','FY2018','FY2019','FY2020'],fyFilter,o=>{fyFilter=o;renderAll();});
+    chipRow(host,'fyChips',['All','FY2018','FY2019','FY2020'],fyFilter,o=>{fyFilter=o;mFrom=FY_RANGE[o][0];mTo=FY_RANGE[o][1]-1;renderAll();});
     // filtered monthly series
     const mLabels=fySlice(AW.months);
     const iRevM=fySlice(AW.internetRev), rRevM=fySlice(AW.resellerRev);
@@ -425,7 +467,8 @@ function renderPage(host, pageId){
      options:{maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+pct(c.raw/109809274)+')'}}}}});
 
     const byCountry = {};
-    AW.territories.forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
+    AW.territories.filter(t=>countryFilter==='All'||t.country===countryFilter)
+      .forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
     const cn = Object.entries(byCountry).sort((a,b)=>b[1].rev-a[1].rev);
     const marginColor = m => m>0.25?T().a1:m>0.12?T().a2:m>0.06?T().a3:T().a4;
     new Chart(el('cCountry'),{type:'bar',data:{labels:cn.map(c=>c[0]),datasets:[{data:cn.map(c=>c[1].rev),backgroundColor:cn.map(c=>marginColor(c[1].prof/c[1].rev)),borderRadius:5}]},
@@ -508,15 +551,16 @@ function renderPage(host, pageId){
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const b=AW.businessTypes[c.dataIndex];return money(b.revenue)+' rev · '+money(b.profit)+' profit';}}}}}});
 
     let rt='<table><tr><th>Reseller</th><th>Type</th><th>Country</th><th class="num">Revenue</th><th class="num">Margin</th></tr>';
-    AW.topResellers.forEach(r=>{
+    AW.topResellers.filter(r=>countryFilter==='All'||r.country===countryFilter).forEach(r=>{
       const mc=r.margin>=0.05?'var(--pos)':r.margin>=0?'var(--a3)':'var(--neg)';
       rt+=`<tr class="clickable" data-r="${r.name}"><td><b>${r.name}</b></td><td><span class="pill">${r.type.replace('Value Added Reseller','VAR').replace('Specialty Bike Shop','Specialty')}</span></td>
       <td>${r.country}</td><td class="num">${money(r.revenue)}</td><td class="num" style="color:${mc};font-weight:600">${pct(r.margin)}</td></tr>`;
     });
-    el('resellerTable').innerHTML=rt+'</table>';
+    const rRows=AW.topResellers.filter(r=>countryFilter==='All'||r.country===countryFilter).length;
+    el('resellerTable').innerHTML = rRows ? rt+'</table>' : '<p style="padding:18px;color:var(--muted);font-size:13px">No top-15 resellers in '+countryFilter+' — this market is internet-direct. Clear the country filter to see all resellers.</p>';
     el('resellerTable').querySelectorAll('tr.clickable').forEach(tr=>tr.onclick=()=>drillReseller(tr.dataset.r));
 
-    const st=AW.customerStates.slice(0,12);
+    const st=AW.customerStates.filter(s=>countryFilter==='All'||s.country===countryFilter).slice(0,12);
     new Chart(el('cStates'),{type:'bar',data:{labels:st.map(s=>s.state),datasets:[{data:st.map(s=>s.revenue),backgroundColor:T().a2,borderRadius:5}]},
      options:{indexAxis:'y',maintainAspectRatio:false,scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false},ticks:{font:{size:11}}}},
      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)+' · '+st[c.dataIndex].customers.toLocaleString()+' customers'}}}}});
@@ -529,6 +573,7 @@ const hostB = document.querySelector('#paneB .pagehost');
 const selA = document.getElementById('selA'), selB = document.getElementById('selB');
 let split = false;
 function renderAll(){
+  syncBar();
   renderPage(hostA, selA.value);
   if(split) renderPage(hostB, selB.value);
 }
