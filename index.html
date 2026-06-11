@@ -569,6 +569,7 @@ document.getElementById('laySplit').onclick = ()=>{ split=true;
 document.getElementById('themeSel').onchange = e=>applyTheme(e.target.value);
 
 // ---------- drawers ----------
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeWN(); closeChat(); closeModal(); } });
 function openWN(){ document.getElementById('wnDrawer').classList.add('open'); closeChat(); }
 function closeWN(){ document.getElementById('wnDrawer').classList.remove('open'); }
 function openChat(){ document.getElementById('chatDrawer').classList.add('open'); closeWN(); }
