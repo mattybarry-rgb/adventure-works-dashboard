@@ -184,7 +184,6 @@
   <div class="sub">FY2018 – FY2020 · monthly trend, channel mix &amp; geography</div>
   <div class="chips" data-c="channelChips"><span class="lbl">CHANNEL:</span></div>
   <div class="chips" data-c="fyChips"><span class="lbl">PERIOD:</span></div>
-  <div class="chips" data-c="geoChips"><span class="lbl">GEOGRAPHY:</span></div>
   <div class="grid kpis" data-c="kpiRow"></div>
   <div class="grid row2">
     <div class="card"><h3>Monthly Revenue + Profit</h3><div class="chartbox tall"><canvas data-c="cTrend"></canvas></div></div>
@@ -405,7 +404,6 @@ function renderPage(host, pageId){
   if(pageId==='p1'){
     chipRow(host,'channelChips',['All','Internet','Reseller'],channelFilter,o=>{channelFilter=o;renderAll();});
     chipRow(host,'fyChips',['All','FY2018','FY2019','FY2020'],fyFilter,o=>{fyFilter=o;mFrom=FY_RANGE[o][0];mTo=FY_RANGE[o][1]-1;renderAll();});
-    chipRow(host,'geoChips',COUNTRIES,countryFilter,o=>{countryFilter=o;renderAll();});
     // filtered monthly series
     const mLabels=fySlice(AW.months);
     const iRevM=fySlice(AW.internetRev), rRevM=fySlice(AW.resellerRev);
@@ -441,8 +439,7 @@ function renderPage(host, pageId){
      options:{maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+pct(c.raw/109809274)+')'}}}}});
 
     const byCountry = {};
-    AW.territories.filter(t=>countryFilter==='All'||t.country===countryFilter)
-      .forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
+    AW.territories.forEach(t=>{const c=byCountry[t.country]??={rev:0,prof:0};c.rev+=t.revenue;c.prof+=t.profit;});
     const cn = Object.entries(byCountry).sort((a,b)=>b[1].rev-a[1].rev);
     const marginColor = m => m>0.25?T().a1:m>0.12?T().a2:m>0.06?T().a3:T().a4;
     new Chart(el('cCountry'),{type:'bar',data:{labels:cn.map(c=>c[0]),datasets:[{data:cn.map(c=>c[1].rev),backgroundColor:cn.map(c=>marginColor(c[1].prof/c[1].rev)),borderRadius:5}]},
