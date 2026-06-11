@@ -29,9 +29,8 @@
   .tab{font-family:inherit;font-size:13px;font-weight:600;padding:7px 18px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--body);cursor:pointer;transition:.15s}
   .tab:hover{border-color:var(--a1);color:var(--a1)}
   .tab.active{background:var(--a1);border-color:var(--a1);color:#fff}
-  body.splitmode .tab{display:none}
-  .splithint{display:none;font-size:12.5px;color:var(--muted);font-style:italic}
-  body.splitmode .splithint{display:inline}
+  .navgroup{display:flex;align-items:center;gap:10px}
+  body.splitmode .navgroup{display:none}
   .layoutbox{margin-left:auto;display:flex;align-items:center;gap:8px}
   .layoutbox .lbl{margin:0}
   .lay{width:38px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer;display:flex;gap:3px;padding:6px}
@@ -88,15 +87,6 @@
   .databar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2))}
   .pill{display:inline-block;font-size:10.5px;padding:2px 9px;border-radius:99px;font-weight:600;background:#eef5fb;color:var(--a5)}
   footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
-  /* global filter bar */
-  .filterbar{background:var(--card);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .filterbar .lbl{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--muted)}
-  .fgroup{display:flex;align-items:center;gap:6px}
-  .fgroup label{font-size:11px;font-weight:600;color:var(--muted)}
-  .fgroup select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);padding:6px 10px;border:1px solid var(--border);border-radius:99px;background:var(--card);cursor:pointer;max-width:120px}
-  .fgroup select.activef{border-color:var(--a1);background:var(--chipbg)}
-  .resetbtn{font-family:inherit;font-size:12px;font-weight:600;padding:6px 14px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer}
-  .resetbtn:hover{color:var(--neg);border-color:var(--neg)}
   /* insight ticker */
   .ticker{background:var(--card);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:12px;overflow:hidden}
   .ticker .tag{font-size:10px;font-weight:700;letter-spacing:1.4px;color:#fff;background:var(--a4);padding:3px 10px;border-radius:99px;white-space:nowrap}
@@ -153,11 +143,12 @@
 </header>
 
 <div class="toolbar">
-  <span class="lbl">PAGES</span>
-  <button class="tab active" data-p="p1">Executive Pulse</button>
-  <button class="tab" data-p="p2">Product &amp; Profitability</button>
-  <button class="tab" data-p="p3">Customers &amp; Territory</button>
-  <span class="splithint">Choose a page in each panel below</span>
+  <span class="navgroup"><span class="lbl">PAGE</span>
+  <select class="themesel" id="navSel">
+    <option value="p1">Executive Pulse</option>
+    <option value="p2">Product &amp; Profitability</option>
+    <option value="p3">Customers &amp; Territory</option>
+  </select></span>
   <div class="layoutbox">
     <button id="whatsnewBtn" onclick="openWN()">★ What's New</button>
     <span class="lbl">THEME</span>
@@ -170,16 +161,6 @@
     <button class="lay active" id="laySingle" title="Single page"><i></i></button>
     <button class="lay" id="laySplit" title="Two pages side by side"><i></i><i></i></button>
   </div>
-</div>
-
-<div class="filterbar">
-  <span class="lbl">FILTERS</span>
-  <div class="fgroup"><label>From</label><select id="fFrom"></select></div>
-  <div class="fgroup"><label>To</label><select id="fTo"></select></div>
-  <div class="fgroup"><label>Channel</label><select id="fChannel"><option>All</option><option>Internet</option><option>Reseller</option></select></div>
-  <div class="fgroup"><label>Category</label><select id="fCat"><option>All</option><option>Bikes</option><option>Components</option><option>Clothing</option><option>Accessories</option></select></div>
-  <div class="fgroup"><label>Country</label><select id="fCountry"><option>All</option></select></div>
-  <button class="resetbtn" id="fReset">Reset filters</button>
 </div>
 
 <div class="ticker"><span class="tag">INSIGHT</span><span class="titem" id="tickerItem"></span></div>
@@ -298,26 +279,6 @@ let mFrom = 0, mTo = 35;     // month index range
 const FY_RANGE = {All:[0,36], FY2018:[0,12], FY2019:[12,24], FY2020:[24,36]};
 const fySlice = arr => arr.slice(mFrom, mTo+1);
 
-// ---------- global filter bar ----------
-const fFrom=document.getElementById('fFrom'), fTo=document.getElementById('fTo'),
-      fChannel=document.getElementById('fChannel'), fCat=document.getElementById('fCat'),
-      fCountry=document.getElementById('fCountry');
-AW.months.forEach((m,i)=>{fFrom.add(new Option(m,i)); fTo.add(new Option(m,i));});
-fTo.value=35;
-[...new Set(AW.territories.map(t=>t.country))].sort().forEach(c=>fCountry.add(new Option(c,c)));
-function markActive(){
-  fFrom.classList.toggle('activef',mFrom!==0); fTo.classList.toggle('activef',mTo!==35);
-  fChannel.classList.toggle('activef',channelFilter!=='All');
-  fCat.classList.toggle('activef',catFilter!=='All');
-  fCountry.classList.toggle('activef',countryFilter!=='All');
-}
-function syncBar(){ fFrom.value=mFrom; fTo.value=mTo; fChannel.value=channelFilter; fCat.value=catFilter; fCountry.value=countryFilter; markActive(); }
-fFrom.onchange=()=>{ mFrom=+fFrom.value; if(mFrom>mTo){mTo=mFrom;} fyFilter=null; renderAll(); };
-fTo.onchange=()=>{ mTo=+fTo.value; if(mTo<mFrom){mFrom=mTo;} fyFilter=null; renderAll(); };
-fChannel.onchange=()=>{ channelFilter=fChannel.value; renderAll(); };
-fCat.onchange=()=>{ catFilter=fCat.value; renderAll(); };
-fCountry.onchange=()=>{ countryFilter=fCountry.value; renderAll(); };
-document.getElementById('fReset').onclick=()=>{ mFrom=0;mTo=35;channelFilter='All';catFilter='All';countryFilter='All';fyFilter='All'; renderAll(); };
 
 // ---------- animated count-up + sparklines ----------
 function countUp(el, target, fmt){
@@ -327,6 +288,7 @@ function countUp(el, target, fmt){
     el.textContent=fmt(target*eased);
     if(p<1) requestAnimationFrame(tick);
   })(t0);
+  setTimeout(()=>{ el.textContent=fmt(target); }, dur+60); // guarantee final value even if rAF is paused
 }
 function sparkline(cv, data, color){
   const dpr=window.devicePixelRatio||1, w=cv.clientWidth||72, h=cv.clientHeight||30;
@@ -579,15 +541,12 @@ const hostB = document.querySelector('#paneB .pagehost');
 const selA = document.getElementById('selA'), selB = document.getElementById('selB');
 let split = false;
 function renderAll(){
-  syncBar();
   renderPage(hostA, selA.value);
   if(split) renderPage(hostB, selB.value);
 }
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
-  selA.value=b.dataset.p; renderPage(hostA,b.dataset.p);
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===b));
-});
-selA.onchange = ()=>renderPage(hostA, selA.value);
+const navSel=document.getElementById('navSel');
+navSel.onchange = ()=>{ selA.value=navSel.value; renderPage(hostA, navSel.value); };
+selA.onchange = ()=>{ navSel.value=selA.value; renderPage(hostA, selA.value); };
 selB.onchange = ()=>renderPage(hostB, selB.value);
 document.getElementById('laySingle').onclick = ()=>{ split=false;
   document.body.classList.remove('splitmode');
