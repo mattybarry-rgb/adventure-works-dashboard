@@ -182,8 +182,10 @@
 <template id="tpl-p1"><section class="page">
   <h1>Executive Pulse</h1>
   <div class="sub">FY2018 – FY2020 · monthly trend, channel mix &amp; geography</div>
-  <div class="chips" data-c="channelChips"><span class="lbl">CHANNEL:</span></div>
-  <div class="chips" data-c="fyChips"><span class="lbl">PERIOD:</span></div>
+  <div style="display:flex;gap:32px;flex-wrap:wrap">
+    <div class="chips" data-c="channelChips"><span class="lbl">CHANNEL:</span></div>
+    <div class="chips" data-c="fyChips"><span class="lbl">PERIOD:</span></div>
+  </div>
   <div class="grid kpis" data-c="kpiRow"></div>
   <div class="grid row2">
     <div class="card"><h3>Monthly Revenue + Profit</h3><div class="chartbox tall"><canvas data-c="cTrend"></canvas></div></div>
