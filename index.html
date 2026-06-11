@@ -62,8 +62,10 @@
   #panes.split .chartbox{height:215px} #panes.split .chartbox.tall{height:245px}
   .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px}
   .kpi{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--a1);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(31,58,95,.05);animation:fadeUp .45s ease both;position:relative}
-  .kpi .spark{position:absolute;right:12px;top:14px;width:72px;height:30px;opacity:.85}
-  .kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600}
+  .kpi{container-type:inline-size}
+  .kpi .spark{position:absolute;right:12px;top:14px;width:64px;height:26px;opacity:.85}
+  @container (max-width:185px){.kpi .spark{display:none}}
+  .kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600;padding-right:70px}
   .kpi .val{font-size:24px;font-weight:700;margin:3px 0 1px;font-family:'JetBrains Mono',monospace;color:var(--ink)}
   .kpi .delta{font-size:12px;font-weight:600}
   .up{color:var(--pos)} .down{color:var(--neg)}
