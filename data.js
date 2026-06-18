@@ -149,5 +149,28 @@ const AW = {
     {state:"Yveline",country:"France",revenue:268665,customers:168},
     {state:"Hauts de Seine",country:"France",revenue:263416,customers:195},
     {state:"Tasmania",country:"Australia",revenue:239938,customers:106}
-  ]
+  ],
+  // new vs returning customers by country × fiscal quarter
+  custByCountryQtr: {
+    labels: ["FY18 Q1","FY18 Q2","FY18 Q3","FY18 Q4","FY19 Q1","FY19 Q2","FY19 Q3","FY19 Q4","FY20 Q1","FY20 Q2","FY20 Q3","FY20 Q4"],
+    data: {
+      "All":            {nw:[611,592,589,669,710,767,851,845,3456,3343,3203,2854], rt:[0,2,2,2,2,4,4,300,1037,1901,2318,2084]},
+      "United States":  {nw:[191,218,192,262,196,205,189,280,1464,1546,1570,1507], rt:[0,1,1,1,1,1,1,55,236,441,506,406]},
+      "Canada":         {nw:[27,36,75,56,56,32,34,37,436,359,220,204], rt:[0,1,1,1,1,1,1,10,35,229,304,326]},
+      "United Kingdom": {nw:[69,48,36,46,95,102,102,100,374,357,331,254], rt:[0,0,0,0,0,1,1,49,136,221,280,292]},
+      "France":         {nw:[34,36,40,53,71,81,96,98,310,316,360,316], rt:[0,0,0,0,0,1,1,29,105,145,184,122]},
+      "Germany":        {nw:[43,38,54,57,57,81,101,101,301,304,332,312], rt:[0,0,0,0,0,0,0,35,116,165,188,158]},
+      "Australia":      {nw:[247,216,192,195,235,266,329,229,571,461,390,261], rt:[0,0,0,0,0,0,0,122,409,700,856,780]}
+    }
+  },
+  // revenue by business type, split by country
+  bizByCountry: {
+    "All": [{type:"Internet (Direct)",revenue:29358677,profit:12080884},{type:"Warehouse",revenue:38726913,profit:-4790},{type:"Value Added Reseller",revenue:34967517,profit:447475},{type:"Specialty Bike Shop",revenue:6756166,profit:27798}],
+    "United States": [{type:"Internet (Direct)",revenue:9389790,profit:3900981},{type:"Warehouse",revenue:23362765,profit:108091},{type:"Value Added Reseller",revenue:25945863,profit:419169},{type:"Specialty Bike Shop",revenue:4299173,profit:15898}],
+    "Canada": [{type:"Internet (Direct)",revenue:1977845,profit:829922},{type:"Warehouse",revenue:8305798,profit:26907},{type:"Value Added Reseller",revenue:4855218,profit:112086},{type:"Specialty Bike Shop",revenue:1216909,profit:39234}],
+    "United Kingdom": [{type:"Internet (Direct)",revenue:3391712,profit:1390491},{type:"Warehouse",revenue:2155718,profit:-14209},{type:"Value Added Reseller",revenue:1793113,profit:20822},{type:"Specialty Bike Shop",revenue:330178,profit:-231}],
+    "France": [{type:"Internet (Direct)",revenue:2644018,profit:1086265},{type:"Warehouse",revenue:3240646,profit:-17834},{type:"Value Added Reseller",revenue:948248,profit:-24478},{type:"Specialty Bike Shop",revenue:418644,profit:5002}],
+    "Germany": [{type:"Internet (Direct)",revenue:2894312,profit:1187371},{type:"Warehouse",revenue:1194375,profit:-78720},{type:"Value Added Reseller",revenue:625523,profit:-22405},{type:"Specialty Bike Shop",revenue:164090,profit:-10129}],
+    "Australia": [{type:"Internet (Direct)",revenue:9061001,profit:3685855},{type:"Warehouse",revenue:467612,profit:-29025},{type:"Value Added Reseller",revenue:799552,profit:-57719},{type:"Specialty Bike Shop",revenue:327172,profit:-21977}]
+  }
 };

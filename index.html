@@ -506,23 +506,18 @@ function renderPage(host, pageId){
 
   if(pageId==='p3'){
     chipRow(host,'geoChips3',COUNTRIES,countryFilter,o=>{countryFilter=o;renderAll();});
-    const qLabels=[],qNew=[],qRet=[];
-    for(let i=0;i<36;i+=3){
-      const y=2017+Math.floor((i+6)/12), q='Q'+(Math.floor(((i+6)%12)/3)+1);
-      qLabels.push(q+" '"+String(y).slice(2));
-      qNew.push(AW.newCust.slice(i,i+3).reduce((a,b)=>a+b,0));
-      qRet.push(AW.retCust.slice(i,i+3).reduce((a,b)=>a+b,0));
-    }
-    new Chart(el('cNewRet'),{type:'bar',data:{labels:qLabels,datasets:[
-      {label:'New',data:qNew,backgroundColor:T().a1,stack:'c',borderRadius:3},
-      {label:'Returning',data:qRet,backgroundColor:T().a3,stack:'c',borderRadius:3}]},
+    const cq = AW.custByCountryQtr.data[countryFilter] || AW.custByCountryQtr.data.All;
+    new Chart(el('cNewRet'),{type:'bar',data:{labels:AW.custByCountryQtr.labels,datasets:[
+      {label:'New',data:cq.nw,backgroundColor:T().a1,stack:'c',borderRadius:3},
+      {label:'Returning',data:cq.rt,backgroundColor:T().a3,stack:'c',borderRadius:3}]},
      options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:GRID}}},plugins:{legend:{labels:{usePointStyle:true}}}}});
 
-    new Chart(el('cBizType'),{type:'bar',data:{labels:AW.businessTypes.map(b=>b.type),datasets:[{data:AW.businessTypes.map(b=>b.revenue),
-     backgroundColor:AW.businessTypes.map(b=>b.profit>1e6?T().a1:b.profit>0?T().a5:T().a4),borderRadius:5}]},
-     options:{indexAxis:'y',maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillBizType(AW.businessTypes[els[0].index].type);},
+    const biz = AW.bizByCountry[countryFilter] || AW.bizByCountry.All;
+    new Chart(el('cBizType'),{type:'bar',data:{labels:biz.map(b=>b.type),datasets:[{data:biz.map(b=>b.revenue),
+     backgroundColor:biz.map(b=>b.profit>1e6?T().a1:b.profit>0?T().a5:T().a4),borderRadius:5}]},
+     options:{indexAxis:'y',maintainAspectRatio:false,onClick:(e,els)=>{if(els.length)drillBizType(biz[els[0].index].type);},
      scales:{x:{ticks:{callback:money},grid:{color:GRID}},y:{grid:{display:false}}},
-     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const b=AW.businessTypes[c.dataIndex];return money(b.revenue)+' rev · '+money(b.profit)+' profit';}}}}}});
+     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const b=biz[c.dataIndex];return money(b.revenue)+' rev · '+money(b.profit)+' profit';}}}}}});
 
     let rt='<table><tr><th>Reseller</th><th>Type</th><th>Country</th><th class="num">Revenue</th><th class="num">Margin</th></tr>';
     AW.topResellers.filter(r=>countryFilter==='All'||r.country===countryFilter).forEach(r=>{
@@ -531,7 +526,7 @@ function renderPage(host, pageId){
       <td>${r.country}</td><td class="num">${money(r.revenue)}</td><td class="num" style="color:${mc};font-weight:600">${pct(r.margin)}</td></tr>`;
     });
     const rRows=AW.topResellers.filter(r=>countryFilter==='All'||r.country===countryFilter).length;
-    el('resellerTable').innerHTML = rRows ? rt+'</table>' : '<p style="padding:18px;color:var(--muted);font-size:13px">No top-15 resellers in '+countryFilter+' — this market is internet-direct. Clear the country filter to see all resellers.</p>';
+    el('resellerTable').innerHTML = rRows ? rt+'</table>' : '<p style="padding:18px;color:var(--muted);font-size:13px">None of the top 15 resellers are based in '+countryFilter+'. Clear the geography filter to see the full list.</p>';
     el('resellerTable').querySelectorAll('tr.clickable').forEach(tr=>tr.onclick=()=>drillReseller(tr.dataset.r));
 
     const st=AW.customerStates.filter(s=>countryFilter==='All'||s.country===countryFilter).slice(0,12);
